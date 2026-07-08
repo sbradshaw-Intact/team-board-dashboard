@@ -227,8 +227,8 @@
           "id": "local-1783540315800",
           "name": "New item",
           "status": "Investigating",
-          "groupId": "group_mkw23vqq",
-          "groupTitle": "Approved",
+          "groupId": "topics",
+          "groupTitle": "Discuss",
           "subitems": [],
           "starts": null,
           "ends": null,
@@ -4578,5 +4578,5 @@
     "trade-show-test"
   ],
   "updatedBy": "sbradshaw@intact-tech.com",
-  "updatedAt": "2026-07-08T19:51:57.002Z"
+  "updatedAt": "2026-07-08T19:52:19.384Z"
 }
