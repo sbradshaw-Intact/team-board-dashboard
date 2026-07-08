@@ -3939,6 +3939,20 @@
       ],
       "items": [
         {
+          "id": "local-1783541019794",
+          "name": "New item",
+          "status": "Working on it",
+          "groupId": "group_mkq3554d",
+          "groupTitle": "Pre-Event Actions",
+          "subitems": [],
+          "person": null,
+          "link_mkxc92z2": null,
+          "text_mkpp8b0h": null,
+          "text_mkpp453n": null,
+          "text_mkpx4ygx": null,
+          "text_mkq320b7": null
+        },
+        {
           "id": "11547312166",
           "name": "Meeting Agenda",
           "subitems": [],
@@ -4519,7 +4533,7 @@
       "items": [],
       "groups": [
         {
-          "id": "group-mrchtd7f",
+          "id": "group-mrchat7p",
           "title": "General",
           "color": "#5286FF"
         }
@@ -4578,5 +4592,5 @@
     "trade-show-test"
   ],
   "updatedBy": "sbradshaw@intact-tech.com",
-  "updatedAt": "2026-07-08T19:53:17.181Z"
+  "updatedAt": "2026-07-08T20:03:40.996Z"
 }
