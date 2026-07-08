@@ -4533,7 +4533,16 @@
           "type": "status"
         }
       ],
-      "items": [],
+      "items": [
+        {
+          "id": "local-1783539440010",
+          "name": "New item",
+          "status": "Not started",
+          "groupId": "group-mrchbqnv",
+          "groupTitle": "General",
+          "subitems": []
+        }
+      ],
       "groups": [
         {
           "id": "group-mrchbqnv",
@@ -4555,5 +4564,5 @@
     "trade-show-test"
   ],
   "updatedBy": "sbradshaw@intact-tech.com",
-  "updatedAt": "2026-07-08T19:37:09.739Z"
+  "updatedAt": "2026-07-08T19:37:21.211Z"
 }
