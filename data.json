@@ -88,8 +88,14 @@
           "postCopy": null,
           "link": null,
           "subitems": [
-            "Post 1",
-            "Post 2"
+            {
+              "name": "Post 1",
+              "done": false
+            },
+            {
+              "name": "Post 2",
+              "done": false
+            }
           ],
           "groupId": "group_title",
           "groupTitle": "Outcome-Based Messaging Campaign"
@@ -228,7 +234,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkw23vqq",
-          "groupTitle": "Approved"
+          "groupTitle": "Approved",
+          "subitems": []
         },
         {
           "id": "12126856077",
@@ -241,7 +248,8 @@
           "website": "https://www.borderpatrolfoundation.org/honoring-the-green",
           "notes": "Zack, AE at SN Ryan Doughty, possible Jessie Monica",
           "groupId": "topics",
-          "groupTitle": "Discuss"
+          "groupTitle": "Discuss",
+          "subitems": []
         },
         {
           "id": "18108697608",
@@ -254,7 +262,8 @@
           "website": "https://dc.afceachapters.org/content/annual-winter-gala",
           "notes": null,
           "groupId": "topics",
-          "groupTitle": "Discuss"
+          "groupTitle": "Discuss",
+          "subitems": []
         },
         {
           "id": "12173940256",
@@ -267,7 +276,8 @@
           "website": "https://www.intelsummit.org/",
           "notes": null,
           "groupId": "topics",
-          "groupTitle": "Discuss"
+          "groupTitle": "Discuss",
+          "subitems": []
         },
         {
           "id": "12174108616",
@@ -280,7 +290,8 @@
           "website": "https://nvsbc.org/events/nvsbc-ef-charity-golf-tournament/",
           "notes": null,
           "groupId": "topics",
-          "groupTitle": "Discuss"
+          "groupTitle": "Discuss",
+          "subitems": []
         },
         {
           "id": "18176656514",
@@ -293,7 +304,8 @@
           "website": "https://www.eventbrite.com/e/breaking-boundaries-2025-disruptive-tech-awards-tickets-1075700933449",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18176646427",
@@ -306,7 +318,8 @@
           "website": "https://www.eventbrite.com/e/forum-innovation-awards-awards-dinner-registration-1222972958039",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18185075148",
@@ -319,7 +332,8 @@
           "website": "https://dc.afceachapters.org/content/events",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18185182715",
@@ -332,7 +346,8 @@
           "website": "https://www.afcea.org/events",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "9545026398",
@@ -345,7 +360,8 @@
           "website": null,
           "notes": "Email sent to the team to see if we are sending anyone to New York Forum",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18299944647",
@@ -358,7 +374,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18370659370",
@@ -371,7 +388,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18370659884",
@@ -384,7 +402,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18370659776",
@@ -397,7 +416,8 @@
           "website": null,
           "notes": "Typically held during the summer months/ not announced yet 2026",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "10817368061",
@@ -410,7 +430,8 @@
           "website": null,
           "notes": "These labs are all over, open the link",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18100950106",
@@ -423,7 +444,8 @@
           "website": "https://intact.monday.com/boards/18345886702",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18370657631",
@@ -436,7 +458,8 @@
           "website": null,
           "notes": "Zack attending",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "11357037146",
@@ -449,7 +472,8 @@
           "website": null,
           "notes": "Email titled: FedFLEX Partner Golf Outing: Tony, Randy, Zack, Rick F. It is at South Riding Golf Club, starting at 1pm",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "10665674726",
@@ -462,7 +486,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18101352368",
@@ -475,7 +500,8 @@
           "website": "https://intact.monday.com/boards/18239523815",
           "notes": "Accepted an invite to be Diamond Sponsor on 10/20/25...Gaylord National Harbour",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18100956450",
@@ -488,7 +514,8 @@
           "website": "https://intact.monday.com/boards/18344549559",
           "notes": "11/10/25 - JH booked hotel at great rate./ Tony and Zack attending the conference, Jason, Vinny going to Vegas...possible Jesse and Randy?",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7734968305",
@@ -501,7 +528,8 @@
           "website": null,
           "notes": "Brian's registration and hotel were canceled and refunded.",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18299951418",
@@ -514,7 +542,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18379542543",
@@ -527,7 +556,8 @@
           "website": null,
           "notes": "Teresa is hosting a VIP HH afterward at Water Bar/ Carrie reserved the spot. We are paying the bar tab up to 2000/3000.",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18108827525",
@@ -540,7 +570,8 @@
           "website": "https://partnerportal.service-now.com/partnerhome",
           "notes": "Won AI Self Nominated Award",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18108814360",
@@ -553,7 +584,8 @@
           "website": "https://www.servicenow.com/events/knowledge/call-for-content.html",
           "notes": "Knowledge 2026 call for content is now open/ due date oct 24th",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7974385264",
@@ -566,7 +598,8 @@
           "website": "https://www.eventbrite.com/e/10th-annual-forum-it100-awards-and-holiday-reception-registration-1738986077169",
           "notes": "Tony, Zack, Vinny attending; Melissa McGriff receiving an award",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18019910450",
@@ -579,7 +612,8 @@
           "website": "https://carahevents.carahsoft.com/Event/Register/668371-Intact",
           "notes": "Jason, Randy golfing; Banquet (10) attending",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18019904409",
@@ -592,7 +626,8 @@
           "website": null,
           "notes": "Playing with Team Redacted IC group",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690834",
@@ -605,7 +640,8 @@
           "website": "https://convergesec.com/",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7757134308",
@@ -618,7 +654,8 @@
           "website": "https://bethesdaevents.afceachapters.org/HITSPreview25",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690713",
@@ -631,7 +668,8 @@
           "website": "https://www.servicenow.com/events/knowledge.html",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690714",
@@ -644,7 +682,8 @@
           "website": "https://www.servicenow.com/events.html",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690715",
@@ -657,7 +696,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690720",
@@ -670,7 +710,8 @@
           "website": "https://www.himssconference.com/",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690726",
@@ -683,7 +724,8 @@
           "website": "https://www.westconference.org/West25/Public/Enter.aspx",
           "notes": "Deadline to submit contracts and sponsor artwork is Friday, January 5th.",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690748",
@@ -696,7 +738,8 @@
           "website": "https://bethesdaevents.afceachapters.org/hits25/Home",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7833161540",
@@ -709,7 +752,8 @@
           "website": null,
           "notes": "This was marked as \"attending\" does anyone know about this?",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "9545143559",
@@ -722,7 +766,8 @@
           "website": "https://rsvp.servicenow.com/AIsummitDC25",
           "notes": "Vinny, Gloria, Sunny, and Joel attending in-person; Brooke attending virtually.",
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7975713140",
@@ -735,7 +780,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690705",
@@ -748,7 +794,8 @@
           "website": "https://www.nowfedforum.com/",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7715690743",
@@ -761,7 +808,8 @@
           "website": null,
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "7746220515",
@@ -774,7 +822,8 @@
           "website": "https://gbef.tech/upcoming-event/edge25ces/",
           "notes": null,
           "groupId": "group_mkqxtf1g",
-          "groupTitle": "Past Events Attended"
+          "groupTitle": "Past Events Attended",
+          "subitems": []
         },
         {
           "id": "18229861712",
@@ -787,7 +836,8 @@
           "website": "https://intacttech-my.sharepoint.com/",
           "notes": "Add to each time we host an event",
           "groupId": "group_mkwymsjm",
-          "groupTitle": "Budgeted"
+          "groupTitle": "Budgeted",
+          "subitems": []
         }
       ],
       "groups": [
@@ -931,14 +981,38 @@
           "publishDate": "2026-07-14",
           "liPostDate": null,
           "subitems": [
-            "Intro Article with Graphic",
-            "OCM",
-            "Fixed Price Contracts",
-            "Managed Services",
-            "AI",
-            "Delivery Methodology",
-            "PreSales/Outcome Facilitation",
-            "Wrap-Up Article with Graphic"
+            {
+              "name": "Intro Article with Graphic",
+              "done": false
+            },
+            {
+              "name": "OCM",
+              "done": false
+            },
+            {
+              "name": "Fixed Price Contracts",
+              "done": false
+            },
+            {
+              "name": "Managed Services",
+              "done": false
+            },
+            {
+              "name": "AI",
+              "done": false
+            },
+            {
+              "name": "Delivery Methodology",
+              "done": false
+            },
+            {
+              "name": "PreSales/Outcome Facilitation",
+              "done": false
+            },
+            {
+              "name": "Wrap-Up Article with Graphic",
+              "done": false
+            }
           ],
           "groupId": "topics",
           "groupTitle": "Ideas"
@@ -1140,7 +1214,7 @@
     "sko2026": {
       "id": "18344549559",
       "name": "SKO2026 (Jan 20-22 Vegas)",
-      "subtitle": "ServiceNow Sales Kickoff 2026 \u2014 Las Vegas",
+      "subtitle": "ServiceNow Sales Kickoff 2026 — Las Vegas",
       "itemLabel": "Task",
       "statusColors": {
         "Scheduled": "#fdab3d",
@@ -4405,6 +4479,37 @@
           "color": "#141414"
         }
       ]
+    },
+    "test": {
+      "id": "test",
+      "name": "TEST",
+      "subtitle": "",
+      "itemLabel": "Item",
+      "statusColors": {
+        "Not started": "#c4c4c4",
+        "Working on it": "#FF9A00",
+        "Done": "#14C7A0"
+      },
+      "statusOrder": [
+        "Not started",
+        "Working on it",
+        "Done"
+      ],
+      "columns": [
+        {
+          "key": "status",
+          "label": "Status",
+          "type": "status"
+        }
+      ],
+      "items": [],
+      "groups": [
+        {
+          "id": "group-mrchat7p",
+          "title": "General",
+          "color": "#5286FF"
+        }
+      ]
     }
   },
   "order": [
@@ -4414,8 +4519,9 @@
     "sko2026",
     "govforum2026",
     "knowledge2025",
-    "knowledge2026"
+    "knowledge2026",
+    "test"
   ],
-  "updatedBy": "seed",
-  "updatedAt": "2026-07-08T00:00:00.000Z"
+  "updatedBy": "sbradshaw@intact-tech.com",
+  "updatedAt": "2026-07-08T19:36:26.391Z"
 }
