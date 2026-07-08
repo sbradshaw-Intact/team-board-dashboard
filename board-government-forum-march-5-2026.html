@@ -109,6 +109,31 @@
     cursor:pointer;
     white-space:nowrap;
   }
+  .notice .gate-controls{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .notice input[type="email"]{
+    border:1px solid var(--brand-teal);
+    border-radius:6px;
+    padding:3px 8px;
+    font-size:12px;
+    background:#fff;
+    color:#0b3d33;
+    min-width:190px;
+  }
+  .notice .status-pill{
+    font-size:11px;
+    font-weight:600;
+    padding:3px 9px;
+    border-radius:20px;
+    white-space:nowrap;
+  }
+  .notice .status-pill.saving{ background:#FFF3D6; color:#7a5b00; }
+  .notice .status-pill.saved{ background:#DFF7EE; color:#0b6b45; }
+  .notice .status-pill.error{ background:#FFE1E1; color:#9c1c1c; }
+  .notice .spacer-fill{ flex:1 1 auto; }
   .app-body{
     display:flex;
     align-items:flex-start;
@@ -724,8 +749,15 @@
 </div>
 
 <div class="notice">
-  <span>This is a working copy for your team &mdash; edits made here (statuses, notes, checklists, boards, columns) are saved locally in this file only and do not sync back to Monday.com. Use Save/Export to download a copy with your changes baked in.</span>
-  <button id="resetBtn">Reset to original data</button>
+  <span id="editorGateText">Loading team data&hellip;</span>
+  <span class="gate-controls" id="editorGateForm" style="display:none;">
+    <input type="email" id="editorEmailInput" placeholder="you@intact-tech.com">
+    <button id="editorEmailSubmit">Enable editing</button>
+  </span>
+  <button id="editorSignOut" style="display:none;">Sign out</button>
+  <span class="spacer-fill"></span>
+  <span class="status-pill" id="saveStatusPill" style="display:none;"></span>
+  <button id="resetBtn">Reset to last synced data</button>
 </div>
 
 <div class="app-body">
@@ -762,6 +794,126 @@ let BOARD_ORDER = /*ORDER_START*/["govforum2026"]/*ORDER_END*/;
 const ORIGINAL_BOARD_ORDER = BOARD_ORDER.slice();
 const TODAY = new Date(); TODAY.setHours(0,0,0,0);
 const BRAND_CYCLE = ["#5286FF","#FF9A00","#14C7A0","#FFD000","#FF4A4A","#141414"];
+
+// ---------- team autosave config ----------
+// Replace WORKER_URL with your deployed Cloudflare Worker URL (see setup guide).
+// Until it is set, the dashboard behaves exactly as before: local-only, no sync.
+const WORKER_URL = "https://intact-mondayboard-proxy.sbradshaw.workers.dev";
+const COMPANY_EMAIL_SUFFIX = "@intact-tech.com";
+const EDITOR_STORAGE_KEY = "teamDashboardEditorEmail";
+const SYNC_POLL_MS = 20000;
+
+function workerConfigured() {
+  return typeof WORKER_URL === "string" && /^https?:\/\//.test(WORKER_URL);
+}
+function isCompanyEmail(v) {
+  return typeof v === "string" && v.trim().toLowerCase().endsWith(COMPANY_EMAIL_SUFFIX);
+}
+let EDITOR_EMAIL = (localStorage.getItem(EDITOR_STORAGE_KEY) || "").trim();
+if (EDITOR_EMAIL && !isCompanyEmail(EDITOR_EMAIL)) EDITOR_EMAIL = "";
+
+let saveTimer = null;
+let saveInFlight = false;
+let saveQueued = false;
+
+function setSaveStatus(status) {
+  const el = document.getElementById("saveStatusPill");
+  if (!el) return;
+  if (!workerConfigured() || !EDITOR_EMAIL) { el.style.display = "none"; return; }
+  el.style.display = "inline-block";
+  el.className = "status-pill " + status;
+  el.textContent = status === "saving" ? "Saving\u2026" : status === "saved" ? "Saved \u2713" : "Save failed \u2014 retrying";
+}
+
+function scheduleRemoteSave() {
+  if (!workerConfigured() || !EDITOR_EMAIL) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(doRemoteSave, 1200);
+}
+
+async function doRemoteSave() {
+  if (!workerConfigured() || !EDITOR_EMAIL) return;
+  if (saveInFlight) { saveQueued = true; return; }
+  saveInFlight = true;
+  setSaveStatus("saving");
+  try {
+    const payload = { data: state, order: BOARD_ORDER, updatedBy: EDITOR_EMAIL, updatedAt: new Date().toISOString() };
+    const res = await fetch(WORKER_URL.replace(/\/$/, "") + "/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error("save failed: " + res.status);
+    setSaveStatus("saved");
+  } catch (err) {
+    console.error("remote save failed", err);
+    setSaveStatus("error");
+  } finally {
+    saveInFlight = false;
+    if (saveQueued) { saveQueued = false; doRemoteSave(); }
+  }
+}
+
+async function fetchRemoteState() {
+  if (!workerConfigured()) return null;
+  try {
+    const res = await fetch(WORKER_URL.replace(/\/$/, "") + "/data", { cache: "no-store" });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (err) {
+    console.error("remote fetch failed", err);
+    return null;
+  }
+}
+
+function normalizeSubitems(board) {
+  board.items.forEach(item => {
+    if (Array.isArray(item.subitems)) {
+      item.subitems = item.subitems.map(s => (typeof s === "string" ? { name: s, done: false } : s));
+    } else {
+      item.subitems = [];
+    }
+  });
+}
+
+function applyRemoteData(remote) {
+  if (!remote || !remote.data) return false;
+  Object.keys(remote.data).forEach(k => {
+    if (Object.prototype.hasOwnProperty.call(RAW_DATA, k)) {
+      RAW_DATA[k] = remote.data[k];
+    }
+  });
+  if (Array.isArray(remote.order) && remote.order.length) {
+    const filtered = remote.order.filter(id => Object.prototype.hasOwnProperty.call(RAW_DATA, id));
+    if (filtered.length === Object.keys(RAW_DATA).length) {
+      ORIGINAL_BOARD_ORDER.length = 0;
+      filtered.forEach(id => ORIGINAL_BOARD_ORDER.push(id));
+    }
+  }
+  return true;
+}
+
+function renderEditorGate() {
+  const text = document.getElementById("editorGateText");
+  const form = document.getElementById("editorGateForm");
+  const signOut = document.getElementById("editorSignOut");
+  if (!workerConfigured()) {
+    text.textContent = "Team autosave isn't set up yet on this file \u2014 edits stay local to your browser only.";
+    form.style.display = "none";
+    signOut.style.display = "none";
+    return;
+  }
+  if (EDITOR_EMAIL) {
+    text.textContent = "Editing as " + EDITOR_EMAIL + " \u2014 your changes autosave for the whole team.";
+    form.style.display = "none";
+    signOut.style.display = "inline-block";
+  } else {
+    text.textContent = "Read-only mode \u2014 enter your " + COMPANY_EMAIL_SUFFIX + " email to enable saving changes for the team.";
+    form.style.display = "inline-flex";
+    signOut.style.display = "none";
+  }
+  setSaveStatus("saved");
+}
 
 // ---------- state ----------
 let state = {};
@@ -810,7 +962,7 @@ function primaryDateFor(item) {
 }
 
 function getBoard() { return state[ui.currentBoard]; }
-function saveState() { /* in-memory only, intentionally not persisted to browser storage or Monday.com */ }
+function saveState() { scheduleRemoteSave(); }
 
 // ---------- helpers ----------
 function fmtDate(d) {
@@ -1840,7 +1992,7 @@ document.addEventListener("keydown", (e) => {
 });
 document.getElementById("exportBtn").addEventListener("click", exportDashboard);
 document.getElementById("resetBtn").addEventListener("click", () => {
-  if (confirm("Reset all local edits (including any boards or columns you added) and reload the original Monday.com data pulled for this dashboard?")) {
+  if (confirm("Discard any unsaved local edits and reload the last data synced for the team?")) {
     resetState();
     ui.currentBoard = BOARD_ORDER[0];
     ui.collapsedGroups = {};
@@ -1853,8 +2005,47 @@ document.getElementById("modalOverlay").addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeModal();
 });
+document.getElementById("editorEmailSubmit").addEventListener("click", () => {
+  const v = document.getElementById("editorEmailInput").value.trim();
+  if (!isCompanyEmail(v)) { alert("Please use your " + COMPANY_EMAIL_SUFFIX + " email address."); return; }
+  EDITOR_EMAIL = v;
+  localStorage.setItem(EDITOR_STORAGE_KEY, v);
+  renderEditorGate();
+});
+document.getElementById("editorEmailInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") document.getElementById("editorEmailSubmit").click();
+});
+document.getElementById("editorSignOut").addEventListener("click", () => {
+  EDITOR_EMAIL = "";
+  localStorage.removeItem(EDITOR_STORAGE_KEY);
+  renderEditorGate();
+});
 
-renderAll();
+function startPolling() {
+  if (!workerConfigured()) return;
+  setInterval(async () => {
+    const modalOpen = document.getElementById("modalOverlay").classList.contains("open");
+    if (modalOpen || saveInFlight) return;
+    const remote = await fetchRemoteState();
+    if (!remote || !remote.data) return;
+    applyRemoteData(remote);
+    BOARD_ORDER = ORIGINAL_BOARD_ORDER.slice();
+    BOARD_ORDER.forEach(id => { state[id] = JSON.parse(JSON.stringify(RAW_DATA[id])); });
+    Object.keys(state).forEach(id => normalizeSubitems(state[id]));
+    if (!state[ui.currentBoard]) ui.currentBoard = BOARD_ORDER[0];
+    renderAll();
+  }, SYNC_POLL_MS);
+}
+
+(async function bootstrap() {
+  const remote = await fetchRemoteState();
+  applyRemoteData(remote);
+  resetState();
+  if (!state[ui.currentBoard]) ui.currentBoard = BOARD_ORDER[0];
+  renderEditorGate();
+  renderAll();
+  startPolling();
+})();
 </script>
 </body>
 </html>
