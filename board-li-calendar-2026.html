@@ -792,6 +792,7 @@ const PRISTINE_HTML = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
 const RAW_DATA = /*DATA_START*/{"li": {"id": "18417050114", "name": "LI Calendar 2026", "subtitle": "Social & content calendar", "itemLabel": "Post", "statusColors": {"Drafting": "#9aadbd", "In Review": "#fdab3d", "Scheduled": "#00c875", "Complete": "#216edf", "No Status": "#c4c4c4"}, "statusOrder": ["Drafting", "In Review", "Scheduled", "Complete", "No Status"], "columns": [{"key": "person", "label": "Owner", "type": "text"}, {"key": "status", "label": "Status", "type": "status"}, {"key": "scheduledDate", "label": "Scheduled Date", "type": "date"}, {"key": "publishDate", "label": "Publish Date", "type": "date"}, {"key": "postCopy", "label": "Post Copy", "type": "longtext"}, {"key": "link", "label": "Link", "type": "text"}], "items": [{"id": "12234567500", "name": "Blog: What is an Outcome?", "person": "Samantha Ruark", "status": "Complete", "scheduledDate": "2026-06-11", "publishDate": "2026-06-11", "postCopy": "Walk into any meeting and ask three people what an \"outcome\" is, and you'll get three very different answers. As an Outcome-Based Services provider for over 13 years, it's one of the most common questions we still get, and one worth answering precisely, because the word gets used to mean almost anything. For us, an outcome has four components: a business result the customer cares about, a number you can put against it, attribution to specific work, and a deadline. If any one of those is missing, you don't have an outcome. You have a hope. We break down the difference between outcomes, outputs, and deliverables in our latest blog.", "link": "https://lnkd.in/eFvkm8WE", "subitems": [], "groupId": "group_title", "groupTitle": "Outcome-Based Messaging Campaign"}, {"id": "12234567501", "name": "Blog: The Customer is the Only Metric that Matters", "person": "Samantha Ruark", "status": "Scheduled", "scheduledDate": "2026-06-16", "publishDate": "2026-06-16", "postCopy": "Behind every technology project is a person who vouched for it. Someone who stood in front of a board or a room of skeptical peers and said, 'Trust me, this will work.' That person is spending something that never shows up in a budget: their credibility. Our outcome-based services model is built around protecting that credibility, by tying a provider's success directly to the customer's business results, not just hours billed or deliverables shipped. The customer is the only metric that matters. Everything else is a means to that end.", "link": "https://lnkd.in/eiQN8KGm", "subitems": [], "groupId": "group_title", "groupTitle": "Outcome-Based Messaging Campaign"}, {"id": "12235668614", "name": "Jesse/Vinny ServiceNow clips", "person": "Samantha Ruark", "status": "Drafting", "scheduledDate": null, "publishDate": null, "postCopy": null, "link": null, "subitems": ["Post 1", "Post 2"], "groupId": "group_title", "groupTitle": "Outcome-Based Messaging Campaign"}, {"id": "12234567497", "name": "Top Workplaces 2026 Announcement", "person": "Samantha Ruark", "status": "In Review", "scheduledDate": "2026-06-22", "publishDate": null, "postCopy": null, "link": null, "subitems": [], "groupId": "topics", "groupTitle": "HR - New Hires, Job Postings Etc"}, {"id": "12234567498", "name": "July New Hire Post", "person": null, "status": "No Status", "scheduledDate": "2026-07-06", "publishDate": null, "postCopy": null, "link": null, "subitems": [], "groupId": "topics", "groupTitle": "HR - New Hires, Job Postings Etc"}, {"id": "12235905058", "name": "TBD: Border Patrol Golf Event", "person": null, "status": "No Status", "scheduledDate": null, "publishDate": null, "postCopy": null, "link": null, "subitems": [], "groupId": "group_mm45c794", "groupTitle": "Event Promo"}], "groups": [{"id": "group_title", "title": "Outcome-Based Messaging Campaign", "color": "#5286FF"}, {"id": "topics", "title": "HR - New Hires, Job Postings Etc", "color": "#FF9A00"}, {"id": "group_mm45c794", "title": "Event Promo", "color": "#14C7A0"}, {"id": "group_mm4582pq", "title": "Ad Hoc Requests", "color": "#FFD000"}]}}/*DATA_END*/;
 let BOARD_ORDER = /*ORDER_START*/["li"]/*ORDER_END*/;
 const ORIGINAL_BOARD_ORDER = BOARD_ORDER.slice();
+const IS_COMBINED_DASHBOARD = BOARD_ORDER.length > 1;
 const TODAY = new Date(); TODAY.setHours(0,0,0,0);
 const BRAND_CYCLE = ["#5286FF","#FF9A00","#14C7A0","#FFD000","#FF4A4A","#141414"];
 
@@ -878,17 +879,31 @@ function normalizeSubitems(board) {
 
 function applyRemoteData(remote) {
   if (!remote || !remote.data) return false;
-  Object.keys(remote.data).forEach(k => {
-    if (Object.prototype.hasOwnProperty.call(RAW_DATA, k)) {
-      RAW_DATA[k] = remote.data[k];
+
+  if (IS_COMBINED_DASHBOARD) {
+    // The combined dashboard is the full picture: adopt every board that exists
+    // remotely (including brand-new boards someone else just created), and drop
+    // any board that no longer exists remotely.
+    Object.keys(remote.data).forEach(k => { RAW_DATA[k] = remote.data[k]; });
+    Object.keys(RAW_DATA).forEach(k => {
+      if (!Object.prototype.hasOwnProperty.call(remote.data, k)) delete RAW_DATA[k];
+    });
+    const order = [];
+    if (Array.isArray(remote.order)) {
+      remote.order.forEach(id => {
+        if (Object.prototype.hasOwnProperty.call(RAW_DATA, id) && !order.includes(id)) order.push(id);
+      });
     }
-  });
-  if (Array.isArray(remote.order) && remote.order.length) {
-    const filtered = remote.order.filter(id => Object.prototype.hasOwnProperty.call(RAW_DATA, id));
-    if (filtered.length === Object.keys(RAW_DATA).length) {
-      ORIGINAL_BOARD_ORDER.length = 0;
-      filtered.forEach(id => ORIGINAL_BOARD_ORDER.push(id));
-    }
+    // Safety net: include any remaining board not present in remote.order.
+    Object.keys(RAW_DATA).forEach(id => { if (!order.includes(id)) order.push(id); });
+    ORIGINAL_BOARD_ORDER.length = 0;
+    order.forEach(id => ORIGINAL_BOARD_ORDER.push(id));
+  } else {
+    // A single-board page should only ever track its own board — never pull in
+    // other boards, and never let its own order shrink/expand.
+    Object.keys(remote.data).forEach(k => {
+      if (Object.prototype.hasOwnProperty.call(RAW_DATA, k)) RAW_DATA[k] = remote.data[k];
+    });
   }
   return true;
 }
@@ -2025,13 +2040,11 @@ function startPolling() {
   if (!workerConfigured()) return;
   setInterval(async () => {
     const modalOpen = document.getElementById("modalOverlay").classList.contains("open");
-    if (modalOpen || saveInFlight) return;
+    if (modalOpen || saveInFlight || saveTimer) return;
     const remote = await fetchRemoteState();
     if (!remote || !remote.data) return;
     applyRemoteData(remote);
-    BOARD_ORDER = ORIGINAL_BOARD_ORDER.slice();
-    BOARD_ORDER.forEach(id => { state[id] = JSON.parse(JSON.stringify(RAW_DATA[id])); });
-    Object.keys(state).forEach(id => normalizeSubitems(state[id]));
+    resetState();
     if (!state[ui.currentBoard]) ui.currentBoard = BOARD_ORDER[0];
     renderAll();
   }, SYNC_POLL_MS);
