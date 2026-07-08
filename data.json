@@ -4510,6 +4510,37 @@
           "color": "#5286FF"
         }
       ]
+    },
+    "trade-show-test": {
+      "id": "trade-show-test",
+      "name": "Trade Show test",
+      "subtitle": "",
+      "itemLabel": "Item",
+      "statusColors": {
+        "Not started": "#c4c4c4",
+        "Working on it": "#FF9A00",
+        "Done": "#14C7A0"
+      },
+      "statusOrder": [
+        "Not started",
+        "Working on it",
+        "Done"
+      ],
+      "columns": [
+        {
+          "key": "status",
+          "label": "Status",
+          "type": "status"
+        }
+      ],
+      "items": [],
+      "groups": [
+        {
+          "id": "group-mrchbqnv",
+          "title": "General",
+          "color": "#5286FF"
+        }
+      ]
     }
   },
   "order": [
@@ -4520,8 +4551,9 @@
     "govforum2026",
     "knowledge2025",
     "knowledge2026",
-    "test"
+    "test",
+    "trade-show-test"
   ],
   "updatedBy": "sbradshaw@intact-tech.com",
-  "updatedAt": "2026-07-08T19:36:36.621Z"
+  "updatedAt": "2026-07-08T19:37:09.739Z"
 }
