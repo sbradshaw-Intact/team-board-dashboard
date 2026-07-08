@@ -238,20 +238,6 @@
           "notes": null
         },
         {
-          "id": "local-1783540315800",
-          "name": "New item",
-          "status": "Investigating",
-          "groupId": "topics",
-          "groupTitle": "Discuss",
-          "subitems": [],
-          "starts": null,
-          "ends": null,
-          "cost": null,
-          "location": null,
-          "website": null,
-          "notes": null
-        },
-        {
           "id": "11537091878",
           "name": "Look into other events based on Credits not used",
           "status": "Investigating",
@@ -4592,5 +4578,5 @@
     "trade-show-test"
   ],
   "updatedBy": "sbradshaw@intact-tech.com",
-  "updatedAt": "2026-07-08T19:52:23.296Z"
+  "updatedAt": "2026-07-08T19:53:17.181Z"
 }
