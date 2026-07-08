@@ -224,6 +224,20 @@
       ],
       "items": [
         {
+          "id": "local-1783541665559",
+          "name": "New item",
+          "status": "Investigating",
+          "groupId": "group_mkw23vqq",
+          "groupTitle": "Approved",
+          "subitems": [],
+          "starts": null,
+          "ends": null,
+          "cost": null,
+          "location": null,
+          "website": null,
+          "notes": null
+        },
+        {
           "id": "local-1783540342095",
           "name": "New item",
           "status": "Investigating",
@@ -4591,6 +4605,6 @@
     "test",
     "trade-show-test"
   ],
-  "updatedBy": "sbradshaw@intact-tech.com",
-  "updatedAt": "2026-07-08T20:03:40.996Z"
+  "updatedBy": "cfleming@intact-tech.com",
+  "updatedAt": "2026-07-08T20:14:26.760Z"
 }
