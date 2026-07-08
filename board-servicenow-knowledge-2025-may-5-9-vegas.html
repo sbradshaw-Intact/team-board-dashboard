@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Board Dashboard</title>
+<style>
+  :root{
+    --bg:#EAEAEB;
+    --panel:#ffffff;
+    --border:#dcdde1;
+    --text:#141414;
+    --text-light:#68686c;
+    --accent:#5286FF;
+    --accent-light:#EAF0FF;
+    --brand-orange:#FF9A00;
+    --brand-teal:#14C7A0;
+    --brand-yellow:#FFD000;
+    --brand-red:#FF4A4A;
+    --brand-black:#141414;
+    --radius:8px;
+    --radius-lg:12px;
+    --shadow:0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md:0 6px 20px rgba(0,0,0,0.10);
+    --transition:.15s ease;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  :focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+  }
+  header.topbar{
+    background:var(--brand-black);
+    border-bottom:3px solid transparent;
+    border-image:linear-gradient(90deg, var(--accent), var(--brand-teal), var(--brand-yellow), var(--brand-orange), var(--brand-red)) 1;
+    padding:13px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  header.topbar h1{
+    font-size:18px;
+    margin:0;
+    font-weight:700;
+    color:#fff;
+    letter-spacing:.01em;
+  }
+  header.topbar .sub{
+    font-size:12px;
+    color:rgba(255,255,255,0.62);
+    margin-top:2px;
+  }
+  header.topbar .count-pill{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(255,255,255,0.18);
+    color:rgba(255,255,255,0.85);
+  }
+  header.topbar .btn{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(255,255,255,0.18);
+    color:#fff;
+  }
+  header.topbar .btn:hover{
+    background:rgba(255,255,255,0.16);
+  }
+  header.topbar .btn.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  header.topbar .btn.accent-teal{
+    background:var(--brand-teal);
+    border-color:var(--brand-teal);
+    color:#0b2e26;
+  }
+  header.topbar .btn.accent-orange{
+    background:var(--brand-orange);
+    border-color:var(--brand-orange);
+    color:#3a2400;
+  }
+  .notice{
+    background:#E9FBF7;
+    border:1px solid var(--brand-teal);
+    color:#0b3d33;
+    font-size:12.5px;
+    padding:7px 24px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .notice button{
+    background:transparent;
+    border:1px solid var(--brand-teal);
+    color:#0b3d33;
+    border-radius:6px;
+    padding:3px 10px;
+    font-size:12px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .app-body{
+    display:flex;
+    align-items:flex-start;
+  }
+  .board-tabs{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    width:212px;
+    flex-shrink:0;
+    padding:12px 8px;
+    background:var(--panel);
+    border-right:1px solid var(--border);
+    min-height:calc(100vh - 105px);
+    overflow-y:auto;
+  }
+  .board-tab{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+    padding:8px 8px 8px 12px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--text-light);
+    cursor:pointer;
+    border-left:3px solid transparent;
+    border-radius:6px;
+    white-space:normal;
+    line-height:1.35;
+    transition:background var(--transition), color var(--transition), border-color var(--transition);
+  }
+  .board-tab:hover{ background:var(--bg); color:var(--text); }
+  .board-tab.active{
+    color:var(--accent);
+    background:var(--accent-light);
+    border-left-color:var(--accent);
+  }
+  .board-tab-name{ flex:1; }
+  .board-tab-share{
+    border:none;
+    background:transparent;
+    color:inherit;
+    opacity:0.55;
+    cursor:pointer;
+    font-size:13px;
+    padding:2px 4px;
+    border-radius:5px;
+    flex-shrink:0;
+    transition:opacity var(--transition), background var(--transition);
+  }
+  .board-tab-share:hover{ opacity:1; background:rgba(0,0,0,0.06); }
+  main{
+    flex:1;
+    min-width:0;
+    padding:18px 22px 60px;
+    max-width:1400px;
+  }
+  .toolbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .view-switch{
+    display:flex;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .view-switch button{
+    border:none;
+    background:transparent;
+    padding:8px 14px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-light);
+    cursor:pointer;
+    transition:background var(--transition), color var(--transition);
+  }
+  .view-switch button:hover{ background:var(--bg); color:var(--text); }
+  .view-switch button.active{
+    background:var(--accent);
+    color:#fff;
+  }
+  .view-switch button.active:hover{ background:var(--accent); }
+  input[type="text"].search{
+    padding:8px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:13px;
+    min-width:220px;
+    background:var(--panel);
+    color:var(--text);
+  }
+  select.status-filter{
+    padding:8px 10px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:13px;
+    background:var(--panel);
+    color:var(--text);
+  }
+  .btn{
+    padding:8px 14px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--panel);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    color:var(--text);
+    white-space:nowrap;
+    transition:background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition), box-shadow var(--transition);
+  }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 3px 8px rgba(0,0,0,0.10); }
+  .btn:active{ transform:translateY(0); box-shadow:none; }
+  .btn.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .btn.danger{
+    color:var(--brand-red);
+    border-color:#ffd3d3;
+  }
+  .btn.accent-teal{
+    background:var(--brand-teal);
+    border-color:var(--brand-teal);
+    color:#0b2e26;
+  }
+  .btn.accent-orange{
+    background:var(--brand-orange);
+    border-color:var(--brand-orange);
+    color:#3a2400;
+  }
+  .spacer{flex:1;}
+  .count-pill{
+    font-size:12px;
+    color:var(--text-light);
+    background:var(--panel);
+    border:1px solid var(--border);
+    padding:6px 10px;
+    border-radius:20px;
+  }
+
+  /* GROUPED BOARD VIEW */
+  .group-section{
+    background:var(--panel);
+    border-radius:var(--radius);
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    margin-bottom:12px;
+    overflow:hidden;
+    transition:box-shadow var(--transition);
+  }
+  .group-section:hover{ box-shadow:var(--shadow-md); }
+  .group-header{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    cursor:pointer;
+    border-left:5px solid var(--group-color, var(--accent));
+    background:var(--panel);
+    transition:background var(--transition);
+  }
+  .group-header:hover{ background:color-mix(in srgb, var(--group-color, var(--accent)) 6%, var(--panel)); }
+  .group-toggle{
+    font-size:11px;
+    color:var(--text-light);
+    width:12px;
+    display:inline-block;
+  }
+  .group-title{
+    font-weight:700;
+    font-size:14px;
+    color:var(--group-color, var(--text));
+  }
+  .group-count{
+    font-size:12px;
+    font-weight:700;
+    color:var(--group-color, var(--text-light));
+    background:color-mix(in srgb, var(--group-color, var(--text-light)) 14%, white);
+    padding:2px 10px;
+    border-radius:12px;
+  }
+  .group-body{ border-top:1px solid var(--border); }
+  .group-empty{
+    padding:14px;
+    font-size:12.5px;
+    color:var(--text-light);
+  }
+
+  /* TABLE (shared by grouped sections + Table view) */
+  table.data-table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--panel);
+    font-size:13px;
+  }
+  table.data-table.standalone{
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    border:1px solid var(--border);
+  }
+  table.data-table th{
+    text-align:left;
+    padding:9px 12px;
+    background:var(--bg);
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    color:var(--text-light);
+    cursor:pointer;
+    user-select:none;
+    white-space:nowrap;
+    border-bottom:1px solid var(--border);
+    transition:color var(--transition);
+  }
+  table.data-table th:hover{ color:var(--text); }
+  table.data-table td{
+    padding:8px 12px;
+    border-bottom:1px solid var(--border);
+    vertical-align:middle;
+    max-width:260px;
+  }
+  table.data-table tr:last-child td{ border-bottom:none; }
+  table.data-table tr:hover{ background:var(--bg); }
+  .name-cell{
+    font-weight:600;
+    cursor:pointer;
+    transition:color var(--transition);
+  }
+  .name-cell:hover{ text-decoration:underline; color:var(--accent); }
+  .truncate{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    display:block;
+  }
+  .group-chip{
+    display:inline-block;
+    padding:3px 9px;
+    border-radius:6px;
+    font-size:11px;
+    font-weight:700;
+    white-space:nowrap;
+    background:var(--chip-color, var(--accent-light));
+    color:var(--chip-text, var(--accent));
+  }
+  .status-pill{
+    display:inline-block;
+    padding:4px 11px;
+    border-radius:6px;
+    color:#fff;
+    font-size:12px;
+    font-weight:700;
+    text-align:center;
+    white-space:nowrap;
+    letter-spacing:.01em;
+  }
+  select.status-select{
+    border:none;
+    border-radius:6px;
+    color:#fff;
+    font-weight:700;
+    font-size:12px;
+    padding:5px 6px;
+    cursor:pointer;
+    appearance:none;
+    -webkit-appearance:none;
+    text-align:center;
+    transition:filter var(--transition), box-shadow var(--transition);
+  }
+  select.status-select:hover{ filter:brightness(1.06); box-shadow:0 2px 6px rgba(0,0,0,0.15); }
+
+  /* CALENDAR */
+  .calendar-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .calendar-header .month-label{
+    font-weight:700;
+    font-size:15px;
+    min-width:160px;
+    text-align:center;
+  }
+  .cal-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+  }
+  .cal-dow{
+    font-size:10.5px;
+    font-weight:700;
+    color:var(--text-light);
+    text-align:center;
+    padding:4px 0;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+  }
+  .cal-cell{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    min-height:92px;
+    padding:6px;
+    font-size:11px;
+    cursor:default;
+    transition:box-shadow var(--transition), border-color var(--transition);
+  }
+  .cal-cell:hover{ box-shadow:var(--shadow-md); }
+  .cal-cell.other-month{ opacity:0.4; }
+  .cal-cell.today{
+    border-color:var(--accent);
+    border-width:2px;
+    background:color-mix(in srgb, var(--accent) 5%, var(--panel));
+  }
+  .cal-cell.today .cal-daynum{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:19px;
+    height:19px;
+    padding:0 4px;
+    border-radius:50%;
+    background:var(--accent);
+    color:#fff;
+  }
+  .cal-daynum{
+    font-weight:700;
+    font-size:12px;
+    margin-bottom:4px;
+  }
+  .cal-chip{
+    background:var(--accent-light);
+    color:var(--accent);
+    border-radius:5px;
+    padding:2px 5px;
+    margin-bottom:3px;
+    font-size:10.5px;
+    cursor:pointer;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    transition:filter var(--transition);
+  }
+  .cal-chip:hover{ filter:brightness(0.94); }
+  .cal-more{
+    font-size:10.5px;
+    color:var(--text-light);
+    cursor:pointer;
+  }
+  .cal-more:hover{ color:var(--accent); }
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(20,20,20,0.45);
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding:40px 20px;
+    z-index:100;
+    overflow-y:auto;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    position:relative;
+    background:var(--panel);
+    border-radius:var(--radius-lg);
+    width:100%;
+    max-width:560px;
+    padding:22px;
+    box-shadow:0 14px 44px rgba(0,0,0,0.22);
+    overflow:hidden;
+  }
+  .modal::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:4px;
+    background:linear-gradient(90deg, var(--accent), var(--brand-teal), var(--brand-yellow), var(--brand-orange), var(--brand-red));
+  }
+  .modal h2{
+    margin:0 0 4px;
+    font-size:17px;
+  }
+  .modal .field{
+    margin-bottom:14px;
+  }
+  .modal label{
+    display:block;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--text-light);
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    margin-bottom:4px;
+  }
+  .modal input[type="text"], .modal input[type="date"], .modal textarea, .modal select{
+    width:100%;
+    padding:8px 10px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    font-size:13px;
+    font-family:inherit;
+    color:var(--text);
+  }
+  .modal textarea{ min-height:80px; resize:vertical; }
+  .modal .row2{ display:flex; gap:12px; }
+  .modal .row2 > div{ flex:1; }
+  .modal-actions{
+    display:flex;
+    justify-content:space-between;
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+  }
+  .subitem-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:5px 0;
+    font-size:13px;
+  }
+  .subitem-row input[type="checkbox"]{ width:16px; height:16px; accent-color:var(--accent); }
+  .subitem-row.done label{ text-decoration:line-through; color:var(--text-light); }
+  .close-x{
+    position:absolute;
+    top:16px;
+    right:20px;
+    cursor:pointer;
+    font-size:20px;
+    color:var(--text-light);
+    background:none;
+    border:none;
+  }
+  .modal{ position:relative; }
+  .day-list-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 0;
+    border-bottom:1px solid var(--border);
+    font-size:13px;
+    cursor:pointer;
+  }
+  .day-list-item:last-child{ border-bottom:none; }
+  .empty-state{
+    text-align:center;
+    color:var(--text-light);
+    padding:40px;
+    font-size:13px;
+  }
+  .col-list{ border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-top:6px; }
+  .col-row{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); font-size:13px; }
+  .col-row:last-child{ border-bottom:none; }
+  .col-row-label{ font-weight:600; flex:1; }
+  .col-name-input{
+    flex:1;
+    min-width:110px;
+    font-weight:600;
+    font-size:13px;
+    padding:6px 8px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:inherit;
+  }
+  .col-name-input:focus{ outline:none; border-color:var(--accent); background:var(--panel); }
+  .col-row-type{ font-size:11px; color:var(--text-light); text-transform:uppercase; background:var(--bg); padding:2px 8px; border-radius:10px; }
+  .col-remove{ padding:4px 10px; font-size:12px; }
+  .col-group-pills{ display:flex; flex-wrap:wrap; gap:6px; width:100%; margin-top:2px; }
+  .pill{
+    padding:3px 10px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text-light);
+    font-size:11.5px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .pill.active{
+    background:var(--accent-light, #eaf0ff);
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .group-check-list{ display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+  .group-check{ display:flex; align-items:center; gap:6px; font-size:13px; font-weight:500; color:var(--text); cursor:pointer; }
+  .group-check input{ width:15px; height:15px; accent-color:var(--accent); }
+  .hint{ font-size:12px; color:var(--text-light); margin-top:-6px; margin-bottom:14px; }
+  .group-header-actions{ display:flex; align-items:center; gap:6px; margin-left:6px; }
+  .group-title-input{
+    font-weight:700;
+    font-size:14px;
+    color:var(--text);
+    border:1px solid var(--accent);
+    border-radius:6px;
+    padding:2px 6px;
+    background:var(--panel);
+    font-family:inherit;
+  }
+  .group-icon-btn{
+    border:none;
+    background:transparent;
+    color:var(--text-light);
+    cursor:pointer;
+    font-size:13px;
+    padding:2px 6px;
+    border-radius:5px;
+    white-space:nowrap;
+  }
+  .group-icon-btn:hover{ background:var(--bg); color:var(--text); }
+
+  /* GLOBAL SEARCH */
+  .global-search-bar{
+    position:relative;
+    padding:10px 24px;
+    background:var(--panel);
+    border-bottom:1px solid var(--border);
+  }
+  .global-search-bar::before{
+    content:"\1F50D";
+    position:absolute;
+    left:38px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:13px;
+    opacity:0.45;
+    pointer-events:none;
+  }
+  .global-search-bar input{
+    width:100%;
+    max-width:480px;
+    padding:9px 14px 9px 34px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:13.5px;
+    font-family:inherit;
+    background:var(--bg);
+    color:var(--text);
+    transition:border-color var(--transition), background var(--transition);
+  }
+  .global-search-bar input:focus{ outline:none; border-color:var(--accent); background:var(--panel); }
+  .global-search-results{
+    position:absolute;
+    top:100%;
+    left:24px;
+    margin-top:4px;
+    width:480px;
+    max-width:calc(100% - 48px);
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    box-shadow:var(--shadow);
+    max-height:360px;
+    overflow-y:auto;
+    z-index:50;
+    display:none;
+  }
+  .global-search-results.open{ display:block; }
+  .gsr-item{ padding:9px 14px; border-bottom:1px solid var(--border); cursor:pointer; font-size:13px; }
+  .gsr-item:last-child{ border-bottom:none; }
+  .gsr-item:hover{ background:var(--bg); }
+  .gsr-board{ font-size:11px; color:var(--text-light); text-transform:uppercase; margin-top:2px; }
+  .gsr-empty{ padding:14px; font-size:12.5px; color:var(--text-light); }
+
+  /* STATUS COLOR INPUT */
+  .status-color-input{
+    width:34px;
+    height:34px;
+    padding:2px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:var(--panel);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <h1 id="boardTitle">Team Board Dashboard</h1>
+    <div class="sub" id="boardSubtitle">Loading...</div>
+  </div>
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+    <span class="count-pill" id="itemCountPill"></span>
+    <button class="btn accent-teal" id="shareBoardBtn">&#128279; Share this board</button>
+    <button class="btn" id="exportBtn">&#8681; Save/Export</button>
+    <button class="btn accent-orange" id="addBoardBtn">+ Add board</button>
+    <button class="btn accent-orange" id="addGroupBtn">+ Add group</button>
+    <button class="btn primary" id="addItemBtn">+ New item</button>
+  </div>
+</header>
+
+<div class="global-search-bar">
+  <input type="text" id="globalSearchInput" placeholder="Search for an item across all boards...">
+  <div class="global-search-results" id="globalSearchResults"></div>
+</div>
+
+<div class="notice">
+  <span>This is a working copy for your team &mdash; edits made here (statuses, notes, checklists, boards, columns) are saved locally in this file only and do not sync back to Monday.com. Use Save/Export to download a copy with your changes baked in.</span>
+  <button id="resetBtn">Reset to original data</button>
+</div>
+
+<div class="app-body">
+  <nav class="board-tabs" id="boardTabs"></nav>
+
+  <main>
+    <div class="toolbar">
+      <div class="view-switch" id="viewSwitch">
+        <button data-view="board">Board</button>
+        <button data-view="table">Table</button>
+        <button data-view="calendar">Calendar</button>
+      </div>
+      <input type="text" class="search" id="searchInput" placeholder="Search items...">
+      <select class="status-filter" id="statusFilter"></select>
+      <select class="status-filter" id="groupFilter"></select>
+      <button class="btn" id="manageColumnsBtn">&#9881; Columns</button>
+      <button class="btn" id="manageStatusesBtn">&#127912; Statuses</button>
+      <div class="spacer"></div>
+    </div>
+
+    <div id="viewContainer"></div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+const PRISTINE_HTML = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+const RAW_DATA = /*DATA_START*/{"knowledge2025": {"id": "8858166058", "name": "ServiceNow Knowledge 2025, May 5-9, Vegas", "subtitle": "ServiceNow Knowledge 2025 conference planning", "itemLabel": "Task", "statusColors": {"Working on it": "#fdab3d", "Done": "#00c875", "Stuck": "#df2f4a", "Invitation Sent": "#007eb5", "LD to send quote for support": "#9d50dd", "Not Needed": "#037f4c", "Pending": "#579bfc", "Confirmed": "#225091", "No Status": "#c4c4c4"}, "statusOrder": ["Working on it", "Done", "Stuck", "Invitation Sent", "LD to send quote for support", "Not Needed", "Pending", "Confirmed", "No Status"], "columns": [{"key": "person", "label": "Person", "type": "text"}, {"key": "status", "label": "Status", "type": "status"}, {"key": "text_mkpp8b0h", "label": "Text", "type": "text"}, {"key": "text_mkpp453n", "label": "Text 1", "type": "text"}, {"key": "text_mkpx4ygx", "label": "Text 2", "type": "text"}, {"key": "text_mkq320b7", "label": "Hotel", "type": "text"}], "items": [{"id": "8980518796", "name": "Retrieval Scan Device used at K25 (Custom questions for device)", "subitems": [], "groupId": "group_mkq3554d", "groupTitle": "Follow-up & Post Event Actions", "person": null, "status": "Done", "text_mkpp8b0h": "Click Task/ open side box/ files/ word doc with questions added", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8981130942", "name": "All leads recieve an email with one pager", "subitems": [], "groupId": "group_mkq3554d", "groupTitle": "Follow-up & Post Event Actions", "person": null, "status": "Done", "text_mkpp8b0h": "Lauren/Samantha creating a one pager \"thank you for stopping by at K25....\"", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8981059943", "name": "After the event; sort leads and opportunities", "subitems": [], "groupId": "group_mkq3554d", "groupTitle": "Follow-up & Post Event Actions", "person": null, "status": "Done", "text_mkpp8b0h": "K25 team will add notes and identify who is a HOT leads and organize the rest of the leads accordingly", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8981145622", "name": "All K25 leads exported to Salesforce", "subitems": [], "groupId": "group_mkq3554d", "groupTitle": "Follow-up & Post Event Actions", "person": null, "status": "Done", "text_mkpp8b0h": "https://intacttech-my.sharepoint.com/:x:/g/personal/cfleming_intact-tech_com/ES1lDLPc0jJFqsl7q8kQY48BPyZy1QXOQde69i8Bo5Q2uQ?e=jeeXjl", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8981071670", "name": "Training session to review all leads vs opportunities", "subitems": [], "groupId": "group_mkq3554d", "groupTitle": "Follow-up & Post Event Actions", "person": null, "status": "Done", "text_mkpp8b0h": "Train the team lead vs opp/ assign leads to team", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166635", "name": "Knowledge Link", "subitems": [], "groupId": "topics", "groupTitle": "Resource Links", "person": null, "status": "Done", "text_mkpp8b0h": "https://www.servicenow.com/events/knowledge.html", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858226943", "name": "SOW Link", "subitems": [], "groupId": "topics", "groupTitle": "Resource Links", "person": null, "status": "Done", "text_mkpp8b0h": "https://intacttech-my.sharepoint.com/:w:/g/personal/lgehrig_intact-tech_com/EfW75-na7hRGqDf-QYyDPFMBmDcON-vr6Zb2FY_j9NBVMA?e=chz6lG", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858232102", "name": "Sponsor Kit", "subitems": [], "groupId": "topics", "groupTitle": "Resource Links", "person": null, "status": "Done", "text_mkpp8b0h": "https://acrobat.adobe.com/id/urn:aaid:sc:VA6C2:e1776fe2-3742-4bec-976a-1f13e8599681", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858235319", "name": "Comms Outreach Link", "subitems": [], "groupId": "topics", "groupTitle": "Resource Links", "person": null, "status": "Done", "text_mkpp8b0h": "https://intacttech-my.sharepoint.com/:w:/g/personal/lgehrig_intact-tech_com/Ebk9UCGZySVEuvZ_VsxCpq4BivEwSyRtlVrMLJqfn1QY4Q?e=hVvdot", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858237198", "name": "Baja Racing Truck Event", "subitems": [], "groupId": "topics", "groupTitle": "Resource Links", "person": null, "status": "Done", "text_mkpp8b0h": "https://intacttech-my.sharepoint.com/:w:/g/personal/cfleming_intact-tech_com/EZ5Zj_ihAhJLurVI7UXfKBgBKJ68sqOr-n2m73H9DKr8lw?e=EG1IsY", "text_mkpp453n": "https://speedvegas.com/race/baja-race-truck", "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858284111", "name": "Kiosk Graphic link", "subitems": [], "groupId": "topics", "groupTitle": "Resource Links", "person": null, "status": "Done", "text_mkpp8b0h": "https://www.vidnoz.com/?test=A", "text_mkpp453n": "Lauren working with team to video", "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858341040", "name": "KBYG PowerPoint", "subitems": [], "groupId": "topics", "groupTitle": "Resource Links", "person": null, "status": "Done", "text_mkpp8b0h": "https://intacttech-my.sharepoint.com/:p:/g/personal/cfleming_intact-tech_com/EUcBARzoR5BOrHC1MEYZM90BrpgzY0tbKg6AVSz6sUT5dQ?e=2kborf", "text_mkpp453n": "updating as we receive new info.", "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166631", "name": "Brian Crosby", "subitems": [], "groupId": "group_mkpmwrvb", "groupTitle": "Attendee List", "person": null, "status": "Confirmed", "text_mkpp8b0h": "Full Free", "text_mkpp453n": "Sunday 5/4; United #780 arrives 6:12pm PT LAS", "text_mkpx4ygx": "Friday 5/9: United #2497 departs LAS 8:25am PT", "text_mkq320b7": "The Venetian   Confirmation: #HEN1ZPM0"}, {"id": "8858167242", "name": "Curtis Hampton", "subitems": [], "groupId": "group_mkpmwrvb", "groupTitle": "Attendee List", "person": null, "status": "Confirmed", "text_mkpp8b0h": "Full Free", "text_mkpp453n": "Monday 5/5; arrives 8:25am PT LAS", "text_mkpx4ygx": "Friday 5/9; departs LAS 7:05 am PT", "text_mkq320b7": "The Wynn"}, {"id": "8858167122", "name": "Lauren Gehrig", "subitems": [], "groupId": "group_mkpmwrvb", "groupTitle": "Attendee List", "person": null, "status": "Confirmed", "text_mkpp8b0h": "Full discounted", "text_mkpp453n": "Sunday 5/4; arrives 4:06pm PT", "text_mkpx4ygx": "Friday; departs LAS 9:35am PT", "text_mkq320b7": "The Wynn"}, {"id": "8926553502", "name": "Wayne Chattaway", "subitems": [], "groupId": "group_mkpmwrvb", "groupTitle": "Attendee List", "person": null, "status": "Confirmed", "text_mkpp8b0h": "Full", "text_mkpp453n": "Sunday (5/4): United #655 arrives LAS 8:29pm PT", "text_mkpx4ygx": "Thursday (5/8): United #1323 departs LAS 1:05pm PT", "text_mkq320b7": "Springhill Suites"}, {"id": "8926554515", "name": "Jason Hampel", "subitems": [], "groupId": "group_mkpmwrvb", "groupTitle": "Attendee List", "person": null, "status": "Confirmed", "text_mkpp8b0h": "Booth", "text_mkpp453n": ":Sunday (5/4): United #2059 arrives LAS pm 8:14pm PT", "text_mkpx4ygx": "Saturday (5/10); United #22382 departs 1:15pm PT", "text_mkq320b7": "Bellagio   Confirmation: #971XRO1NR0"}, {"id": "8955911541", "name": "Christian Malone", "subitems": [], "groupId": "group_mkpmwrvb", "groupTitle": "Attendee List", "person": null, "status": "Confirmed", "text_mkpp8b0h": "Full Free", "text_mkpp453n": "Monday 5/5; arrives 11:17am PT LAS", "text_mkpx4ygx": "Monday 5/9; leaves 8:25am PT", "text_mkq320b7": "Flamingo"}, {"id": "8858166983", "name": "Keynote & welcome reception", "subitems": [], "groupId": "new_group22267", "groupTitle": "Agenda", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167019", "name": "Keynote & Sponsor Evening", "subitems": [], "groupId": "new_group22267", "groupTitle": "Agenda", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167049", "name": "Keynote & closing celebration", "subitems": [], "groupId": "new_group22267", "groupTitle": "Agenda", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166699", "name": "Reservations for breakfast/lunch meetings (2-3 per day for reps)", "subitems": [], "groupId": "new_group18854", "groupTitle": "Networking events", "person": "Deleted member, Barrett East, Curtis Hampton", "status": "Done", "text_mkpp8b0h": "team plan your individual meetings and reservations for breakfast lunches", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166787", "name": "SpeedVegas Invite List", "subitems": [], "groupId": "new_group18854", "groupTitle": "Networking events", "person": "Denise Beshaw Ryan", "status": "Done", "text_mkpp8b0h": "Denise working on invites", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167030", "name": "Transportation to and from Speed Vegas", "subitems": [], "groupId": "new_group18854", "groupTitle": "Networking events", "person": "Denise Beshaw Ryan", "status": "Done", "text_mkpp8b0h": null, "text_mkpp453n": "1pm PT pick up @ The Venetian Hotel | 3355 South Las Vegas Blvd. Las Vegas, NV 89109 | (FRONT VALET ENTRANCE: SHUTTLE OR PRIVATE CAR)", "text_mkpx4ygx": "Drop off @ The Venetian around 4:30/5:00PT", "text_mkq320b7": null}, {"id": "8858167003", "name": "Invite to booth through HubSpot", "subitems": [], "groupId": "new_group18854", "groupTitle": "Networking events", "person": "Lauren Gehrig", "status": "Working on it", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167133", "name": "Dinner reservation 2", "subitems": [], "groupId": "new_group18854", "groupTitle": "Networking events", "person": "Denise Beshaw Ryan", "status": "Done", "text_mkpp8b0h": "12 people enterprise Todd D", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8949957733", "name": "Carnival", "subitems": [], "groupId": "new_group18854", "groupTitle": "Networking events", "person": "Deleted member", "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167164", "name": "Thursday SN Closing Event", "subitems": [], "groupId": "new_group18854", "groupTitle": "Networking events", "person": null, "status": "Done", "text_mkpp8b0h": "the team", "text_mkpp453n": "The Sphere: Gwen Stefani and Leon Bridges", "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8949953944", "name": "ServiceNow", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8949961099", "name": "Norwegian", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": "Deleted member", "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8949965627", "name": "Ryder", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": "Deleted member", "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": "Meeting set for 5/8 at 2:15pm PT", "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8949969054", "name": "DoE ESnet", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": "Deleted member", "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8950452276", "name": "Princess", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167092", "name": "Royal Caribbean", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": "Deleted member", "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167184", "name": "Dish/EchoStar", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": "Deleted member", "status": "No Status", "text_mkpp8b0h": "Would like to invite Pierre and Caleb to dinner Tuesday night. Need some TLC time with this team", "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8899215115", "name": "FEPOC", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": "Barrett East", "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8899221366", "name": "ADT", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": "Deleted member", "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8899222949", "name": "Dept of Energy", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": "Deleted member", "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8953353879", "name": "Partners", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8989420905", "name": "VA", "subitems": [], "groupId": "new_group86350", "groupTitle": "Meetings & Connections", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166806", "name": "Company Logo (Print & Web) due in ERC", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167151", "name": "Sponsor Showcase Goes Live on Website", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167180", "name": "Registration Launch", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167205", "name": "Manage your sponsorship registration passes in the ERC", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166793", "name": "Access the Co-Marketing Toolkit", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167233", "name": "Sponsor booth graphics deadline", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166887", "name": "Exhibitor kit & lead retrieval order deadline", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166915", "name": "Mobile app launch", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166907", "name": "Sponsor KBYG (Know Before You Go)", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166820", "name": "Manage onsite contacts in ERC", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166836", "name": "Onsite Setup", "subitems": [], "groupId": "new_group80402", "groupTitle": "Freeman Knowledge Timeline", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166675", "name": "Complete company profile in resource center", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166638", "name": "Upload logo to profile", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166698", "name": "Upload Company Tile Image for Sponsor Showcase (PNG or JPEG)", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166740", "name": "Upload High Res Vector Color Logo for Printed Graphics (EPS or AI)", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166769", "name": "Upload High Res Vector Inverse Logo for Printed Graphics (EPS or AI)", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166801", "name": "Upload Color High Res Logo (PNG)", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166832", "name": "Upload Inverse High Res Logo (PNG)", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166695", "name": "Event playbook (Who's doing what, where)", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166861", "name": "Assign employee passes", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166912", "name": "Arrange shipping and pick up for merch", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166899", "name": "Manage Sponsor Contacts", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166924", "name": "Attend Sponsor Office Hours", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166952", "name": "Create Harvest code", "subitems": [], "groupId": "group_title", "groupTitle": "General to-dos", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166640", "name": "Design", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166681", "name": "Giveaways - no swag policy", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166650", "name": "Demos", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166633", "name": "Booth events to drive traffic", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166636", "name": "Lead retrieval", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166737", "name": "Booth schedule for team", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166785", "name": "Prep meetings leading up with whole team", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166809", "name": "Booth signage, video, etc.", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166738", "name": "Tech needed for monitor?", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166847", "name": "Talking points for staff/playbook", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166884", "name": "Exhibitor schedule", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166739", "name": "Booth selection", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167150", "name": "Looping deck for monitor", "subitems": [], "groupId": "new_group", "groupTitle": "Booth", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166672", "name": "Pre-and post-event social campaign", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166670", "name": "Pre-and post-event email campaign", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166696", "name": "Hubspot landing page", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166730", "name": "Pre-event press release", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166677", "name": "Find registered media and analyst list and set meetings", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166686", "name": "Post event lead list", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166794", "name": "Create individual social graphics for each attendee (TBD)", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166848", "name": "Ancilary sponsorships?", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858166946", "name": "passport program booth engagement", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}, {"id": "8858167175", "name": "K24 Case Study Video Recordings", "subitems": [], "groupId": "new_group50516", "groupTitle": "Marketing", "person": null, "status": "No Status", "text_mkpp8b0h": null, "text_mkpp453n": null, "text_mkpx4ygx": null, "text_mkq320b7": null}], "groups": [{"id": "group_mkq3554d", "title": "Follow-up & Post Event Actions", "color": "#5286FF"}, {"id": "topics", "title": "Resource Links", "color": "#FF9A00"}, {"id": "group_mkpmwrvb", "title": "Attendee List", "color": "#14C7A0"}, {"id": "new_group22267", "title": "Agenda", "color": "#FFD000"}, {"id": "new_group18854", "title": "Networking events", "color": "#FF4A4A"}, {"id": "new_group86350", "title": "Meetings & Connections", "color": "#141414"}, {"id": "new_group80402", "title": "Freeman Knowledge Timeline", "color": "#5286FF"}, {"id": "group_title", "title": "General to-dos", "color": "#FF9A00"}, {"id": "new_group", "title": "Booth", "color": "#14C7A0"}, {"id": "new_group50516", "title": "Marketing", "color": "#FFD000"}]}}/*DATA_END*/;
+let BOARD_ORDER = /*ORDER_START*/["knowledge2025"]/*ORDER_END*/;
+const ORIGINAL_BOARD_ORDER = BOARD_ORDER.slice();
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+const BRAND_CYCLE = ["#5286FF","#FF9A00","#14C7A0","#FFD000","#FF4A4A","#141414"];
+
+// ---------- state ----------
+let state = {};
+function resetState() {
+  state = {};
+  BOARD_ORDER = ORIGINAL_BOARD_ORDER.slice();
+  BOARD_ORDER.forEach(id => { state[id] = JSON.parse(JSON.stringify(RAW_DATA[id])); });
+  for (const boardId in state) {
+    const board = state[boardId];
+    board.items.forEach(item => {
+      if (Array.isArray(item.subitems)) {
+        item.subitems = item.subitems.map(s => (typeof s === "string" ? { name: s, done: false } : s));
+      } else {
+        item.subitems = [];
+      }
+    });
+  }
+}
+resetState();
+
+let ui = {
+  currentBoard: BOARD_ORDER[0],
+  currentView: "board",
+  search: "",
+  statusFilter: "__all__",
+  groupFilter: "__all__",
+  sortCol: null,
+  sortDir: "asc",
+  calMonth: TODAY.getMonth(),
+  calYear: TODAY.getFullYear(),
+  editingItemId: null,
+  collapsedGroups: {}
+};
+
+const PRIMARY_DATE = {
+  li: (item) => item.publishDate || item.scheduledDate,
+  events: (item) => item.starts,
+  articles: (item) => item.publishDate
+};
+function primaryDateFor(item) {
+  const fn = PRIMARY_DATE[ui.currentBoard];
+  if (fn) return fn(item);
+  const board = getBoard();
+  const dateCol = board.columns.find(c => c.type === "date");
+  return dateCol ? item[dateCol.key] : null;
+}
+
+function getBoard() { return state[ui.currentBoard]; }
+function saveState() { /* in-memory only, intentionally not persisted to browser storage or Monday.com */ }
+
+// ---------- helpers ----------
+function fmtDate(d) {
+  if (!d) return "";
+  const dt = new Date(d + "T00:00:00");
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+function escapeHtml(str) {
+  if (str === null || str === undefined) return "";
+  return String(str).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function statusColor(board, statusVal) {
+  return board.statusColors[statusVal] || "#c4c4c4";
+}
+function groupInfo(board, groupId) {
+  return (board.groups || []).find(g => g.id === groupId) || { id: "other", title: "Other", color: "#9aa0a6" };
+}
+function slugify(str) {
+  return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "item";
+}
+function uniqueBoardKey(name) {
+  const base = slugify(name);
+  let key = base, i = 2;
+  while (state[key]) { key = base + "-" + i; i++; }
+  return key;
+}
+function uniqueColKey(board, label) {
+  const reserved = ["id", "name", "groupId", "groupTitle", "subitems"];
+  const base = slugify(label).replace(/-/g, "_") || "col";
+  let key = base, i = 2;
+  while (reserved.includes(key) || board.columns.some(c => c.key === key)) { key = base + "_" + i; i++; }
+  return key;
+}
+function uniqueGroupKey(board, title) {
+  const base = "group-" + slugify(title);
+  let key = base, i = 2;
+  while ((board.groups || []).some(g => g.id === key)) { key = base + "-" + i; i++; }
+  return key;
+}
+function ensureGroupColumnKeys(board, group) {
+  if (!group.columnKeys) group.columnKeys = board.columns.map(c => c.key);
+  return group.columnKeys;
+}
+function groupColumnDefs(board, group) {
+  if (!group || !group.columnKeys) return board.columns;
+  return board.columns.filter(c => group.columnKeys.includes(c.key));
+}
+function itemMatchesQuery(board, item, q) {
+  const fields = [item.name];
+  board.columns.forEach(c => {
+    if (c.type === "status") return;
+    if (c.type === "link") {
+      const v = item[c.key];
+      if (v && typeof v === "object") { fields.push(v.label); fields.push(v.url); }
+    } else {
+      fields.push(item[c.key]);
+    }
+  });
+  return fields.some(f => f && String(f).toLowerCase().includes(q));
+}
+function matchesSearch(board, item) {
+  if (!ui.search) return true;
+  return itemMatchesQuery(board, item, ui.search.toLowerCase());
+}
+function matchesStatusFilter(item) {
+  if (ui.statusFilter === "__all__") return true;
+  return item.status === ui.statusFilter;
+}
+function matchesGroupFilter(item) {
+  if (ui.groupFilter === "__all__") return true;
+  return item.groupId === ui.groupFilter;
+}
+function filteredItems(board) {
+  return board.items.filter(i => matchesSearch(board, i) && matchesStatusFilter(i) && matchesGroupFilter(i));
+}
+
+// ---------- render: shell ----------
+function renderTabs() {
+  const el = document.getElementById("boardTabs");
+  el.innerHTML = "";
+  el.style.display = BOARD_ORDER.length <= 1 ? "none" : "flex";
+  BOARD_ORDER.forEach(id => {
+    const b = state[id];
+    if (!b) return;
+    const div = document.createElement("div");
+    div.className = "board-tab" + (id === ui.currentBoard ? " active" : "");
+    div.innerHTML = `<span class="board-tab-name">${escapeHtml(b.name)}</span>
+      <button type="button" class="board-tab-share" data-share="${escapeHtml(id)}" title="Get a shareable file for just this board">&#128279;</button>`;
+    div.onclick = (e) => {
+      if (e.target.closest("[data-share]")) return;
+      ui.currentBoard = id; ui.search = ""; ui.statusFilter = "__all__"; ui.groupFilter = "__all__"; ui.sortCol=null; renderAll();
+    };
+    div.querySelector("[data-share]").onclick = (e) => { e.stopPropagation(); exportSingleBoard(id); };
+    el.appendChild(div);
+  });
+}
+
+function renderHeader() {
+  const board = getBoard();
+  document.getElementById("boardTitle").textContent = board.name;
+  document.getElementById("boardSubtitle").textContent = (board.subtitle ? board.subtitle + " · " : "") + board.items.length + " " + board.itemLabel + (board.items.length === 1 ? "" : "s");
+  const shown = filteredItems(board).length;
+  document.getElementById("itemCountPill").textContent = shown + " of " + board.items.length + " shown";
+}
+
+function renderStatusFilterOptions() {
+  const board = getBoard();
+  const sel = document.getElementById("statusFilter");
+  sel.innerHTML = '<option value="__all__">All statuses</option>' +
+    board.statusOrder.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+  sel.value = ui.statusFilter;
+
+  const gsel = document.getElementById("groupFilter");
+  gsel.innerHTML = '<option value="__all__">All groups</option>' +
+    (board.groups || []).map(g => `<option value="${escapeHtml(g.id)}">${escapeHtml(g.title)}</option>`).join("");
+  gsel.value = ui.groupFilter;
+}
+
+function renderViewSwitch() {
+  document.querySelectorAll("#viewSwitch button").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.view === ui.currentView);
+  });
+}
+
+// ---------- GLOBAL (cross-board) SEARCH ----------
+function renderGlobalSearchResults(query) {
+  const box = document.getElementById("globalSearchResults");
+  if (!query) { box.classList.remove("open"); box.innerHTML = ""; return; }
+  const q = query.toLowerCase();
+  const matches = [];
+  BOARD_ORDER.forEach(boardId => {
+    const board = state[boardId];
+    if (!board) return;
+    board.items.forEach(item => {
+      if (itemMatchesQuery(board, item, q)) matches.push({ boardId, boardName: board.name, item });
+    });
+  });
+  if (matches.length === 0) {
+    box.innerHTML = `<div class="gsr-empty">No items match "${escapeHtml(query)}".</div>`;
+  } else {
+    const shown = matches.slice(0, 25);
+    box.innerHTML = shown.map(m => `
+      <div class="gsr-item" data-board="${escapeHtml(m.boardId)}" data-item="${escapeHtml(m.item.id)}">
+        <div>${escapeHtml(m.item.name)}</div>
+        <div class="gsr-board">${escapeHtml(m.boardName)}</div>
+      </div>`).join("") + (matches.length > shown.length ? `<div class="gsr-empty">+${matches.length - shown.length} more &mdash; refine your search to narrow it down.</div>` : "");
+    box.querySelectorAll("[data-board]").forEach(elRow => {
+      elRow.onclick = () => {
+        ui.currentBoard = elRow.dataset.board;
+        ui.search = ""; ui.statusFilter = "__all__"; ui.groupFilter = "__all__"; ui.sortCol = null;
+        document.getElementById("globalSearchInput").value = "";
+        box.classList.remove("open");
+        box.innerHTML = "";
+        renderAll();
+        openModal(elRow.dataset.item);
+      };
+    });
+  }
+  box.classList.add("open");
+}
+
+function renderAll() {
+  renderTabs();
+  renderHeader();
+  renderStatusFilterOptions();
+  renderViewSwitch();
+  renderView();
+}
+
+// ---------- shared item table renderer ----------
+function buildItemsTableHtml(board, items, opts) {
+  opts = opts || {};
+  const cols = opts.columns || board.columns;
+  let html = '<table class="data-table' + (opts.standalone ? ' standalone' : '') + '"><thead><tr>';
+  html += `<th data-col="name">Name ${sortArrow("name")}</th>`;
+  if (opts.showGroupCol) html += `<th data-col="groupTitle">Group ${sortArrow("groupTitle")}</th>`;
+  cols.forEach(c => { html += `<th data-col="${c.key}">${escapeHtml(c.label)} ${sortArrow(c.key)}</th>`; });
+  html += "<th>Details</th></tr></thead><tbody>";
+
+  if (items.length === 0) {
+    html += `<tr><td colspan="${cols.length + (opts.showGroupCol ? 3 : 2)}"><div class="empty-state">No items match your filters.</div></td></tr>`;
+  }
+
+  items.forEach(item => {
+    html += "<tr>";
+    html += `<td class="name-cell" data-open="${item.id}">${escapeHtml(item.name)}</td>`;
+    if (opts.showGroupCol) {
+      const g = groupInfo(board, item.groupId);
+      html += `<td><span class="group-chip" style="--chip-color:${g.color}22;--chip-text:${g.color};">${escapeHtml(g.title)}</span></td>`;
+    }
+    cols.forEach(c => {
+      if (c.type === "status") {
+        const color = statusColor(board, item.status);
+        html += `<td><select class="status-select" style="background:${color}" data-status-item="${item.id}">`;
+        board.statusOrder.forEach(s => {
+          html += `<option value="${escapeHtml(s)}" ${s === item.status ? "selected" : ""}>${escapeHtml(s)}</option>`;
+        });
+        html += `</select></td>`;
+      } else if (c.type === "date") {
+        html += `<td>${item[c.key] ? fmtDate(item[c.key]) : '<span style="color:#b7b9c2">—</span>'}</td>`;
+      } else if (c.type === "longtext") {
+        const val = item[c.key] || "";
+        html += `<td><span class="truncate" style="max-width:260px;display:inline-block;">${escapeHtml(val)}</span></td>`;
+      } else if (c.type === "link") {
+        const lv = item[c.key];
+        if (lv && lv.url) {
+          html += `<td><a href="${escapeHtml(lv.url)}" target="_blank" rel="noopener" class="truncate" style="max-width:220px;display:inline-block;">${escapeHtml(lv.label || lv.url)}</a></td>`;
+        } else {
+          html += `<td><span style="color:#b7b9c2">—</span></td>`;
+        }
+      } else {
+        const val = item[c.key];
+        if (val && /^https?:\/\//.test(val)) {
+          html += `<td><a href="${escapeHtml(val)}" target="_blank" rel="noopener" class="truncate" style="max-width:220px;display:inline-block;">${escapeHtml(val)}</a></td>`;
+        } else {
+          html += `<td><span class="truncate" style="max-width:220px;display:inline-block;">${escapeHtml(val) || '<span style="color:#b7b9c2">—</span>'}</span></td>`;
+        }
+      }
+    });
+    html += `<td><button class="btn" data-open="${item.id}">Open</button></td>`;
+    html += "</tr>";
+  });
+  html += "</tbody></table>";
+  return html;
+}
+
+function wireItemsTable(wrap, board) {
+  wrap.querySelectorAll("th[data-col]").forEach(th => {
+    th.onclick = () => {
+      const col = th.dataset.col;
+      if (ui.sortCol === col) { ui.sortDir = ui.sortDir === "asc" ? "desc" : "asc"; }
+      else { ui.sortCol = col; ui.sortDir = "asc"; }
+      renderView();
+    };
+  });
+  wrap.querySelectorAll("[data-open]").forEach(el => {
+    el.onclick = () => openModal(el.dataset.open);
+  });
+  wrap.querySelectorAll("[data-status-item]").forEach(sel => {
+    sel.onchange = () => {
+      const item = board.items.find(i => i.id === sel.dataset.statusItem);
+      item.status = sel.value;
+      saveState();
+      renderView();
+      renderHeader();
+    };
+  });
+}
+
+function sortItems(board, items) {
+  if (!ui.sortCol) return items;
+  return items.slice().sort((a, b) => {
+    let av = a[ui.sortCol]; let bv = b[ui.sortCol];
+    if (av && typeof av === "object") av = av.label || av.url || "";
+    if (bv && typeof bv === "object") bv = bv.label || bv.url || "";
+    av = av || ""; bv = bv || "";
+    if (av < bv) return ui.sortDir === "asc" ? -1 : 1;
+    if (av > bv) return ui.sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+}
+function sortArrow(col) {
+  if (ui.sortCol !== col) return "";
+  return ui.sortDir === "asc" ? "▲" : "▼";
+}
+
+// ---------- BOARD (grouped, Monday-style) VIEW ----------
+function renderBoardGroups() {
+  const board = getBoard();
+  const items = sortItems(board, filteredItems(board));
+  const groups = board.groups || [];
+  const wrap = document.getElementById("viewContainer");
+  wrap.innerHTML = "";
+
+  groups.forEach(g => {
+    const groupItems = items.filter(i => i.groupId === g.id);
+    const key = ui.currentBoard + "::" + g.id;
+    const collapsed = !!ui.collapsedGroups[key];
+
+    const section = document.createElement("div");
+    section.className = "group-section";
+    section.style.setProperty("--group-color", g.color);
+
+    const header = document.createElement("div");
+    header.className = "group-header";
+    header.innerHTML = `<span class="group-toggle">${collapsed ? "▸" : "▾"}</span>
+      <span class="group-title" data-group-title-for="${escapeHtml(g.id)}">${escapeHtml(g.title)}</span>
+      <div class="group-header-actions">
+        <button type="button" class="group-icon-btn" data-group-rename="${escapeHtml(g.id)}" title="Rename group">&#9998; Rename</button>
+        <button type="button" class="group-icon-btn" data-group-addcol="${escapeHtml(g.id)}" title="Add a column just for this group">+ Column</button>
+      </div>
+      <span class="spacer"></span>
+      <span class="group-count">${groupItems.length}</span>`;
+    header.onclick = () => {
+      ui.collapsedGroups[key] = !collapsed;
+      renderView();
+    };
+    section.appendChild(header);
+
+    if (!collapsed) {
+      const body = document.createElement("div");
+      body.className = "group-body";
+      if (groupItems.length === 0) {
+        body.innerHTML = '<div class="group-empty">No items in this group match your filters.</div>';
+      } else {
+        body.innerHTML = buildItemsTableHtml(board, groupItems, { showGroupCol: false, columns: groupColumnDefs(board, g) });
+      }
+      section.appendChild(body);
+    }
+    wrap.appendChild(section);
+    if (!collapsed) wireItemsTable(section, board);
+
+    header.querySelector("[data-group-rename]").onclick = (e) => {
+      e.stopPropagation();
+      startGroupRename(header, board, g);
+    };
+    header.querySelector("[data-group-addcol]").onclick = (e) => {
+      e.stopPropagation();
+      renderManageColumnsModal(g.id);
+    };
+  });
+
+  if (groups.length === 0 || items.length === 0) {
+    if (wrap.innerHTML === "" || items.length === 0 && groups.every(g => items.filter(i=>i.groupId===g.id).length === 0)) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "No items match your filters.";
+      wrap.appendChild(empty);
+    }
+  }
+}
+
+function startGroupRename(header, board, group) {
+  const span = header.querySelector(`[data-group-title-for="${group.id}"]`);
+  if (!span) return;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "group-title-input";
+  input.value = group.title;
+  span.replaceWith(input);
+  input.focus();
+  input.select();
+  let cancelled = false;
+  const commit = () => {
+    if (cancelled) return;
+    const newTitle = input.value.trim() || group.title;
+    group.title = newTitle;
+    board.items.forEach(it => { if (it.groupId === group.id) it.groupTitle = newTitle; });
+    saveState();
+    renderAll();
+  };
+  input.addEventListener("keydown", (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter") { input.blur(); }
+    if (e.key === "Escape") { cancelled = true; renderView(); }
+  });
+  input.addEventListener("click", (e) => e.stopPropagation());
+  input.addEventListener("blur", commit, { once: true });
+}
+
+// ---------- TABLE VIEW ----------
+function renderTable() {
+  const board = getBoard();
+  const items = sortItems(board, filteredItems(board));
+  const wrap = document.getElementById("viewContainer");
+  wrap.innerHTML = buildItemsTableHtml(board, items, { standalone: true, showGroupCol: true });
+  wireItemsTable(wrap, board);
+}
+
+// ---------- CALENDAR ----------
+function renderCalendar() {
+  const board = getBoard();
+  const items = filteredItems(board);
+
+  const itemsByDate = {};
+  items.forEach(item => {
+    const d = primaryDateFor(item);
+    if (!d) return;
+    if (!itemsByDate[d]) itemsByDate[d] = [];
+    itemsByDate[d].push(item);
+  });
+
+  const year = ui.calYear, month = ui.calMonth;
+  const firstDay = new Date(year, month, 1);
+  const startWeekday = firstDay.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  let cells = [];
+  for (let i = startWeekday - 1; i >= 0; i--) {
+    cells.push({ day: daysInPrevMonth - i, other: true });
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    cells.push({ day: d, other: false });
+  }
+  while (cells.length % 7 !== 0) {
+    cells.push({ day: cells.length - (startWeekday + daysInMonth) + 1, other: true });
+  }
+
+  const wrap = document.getElementById("viewContainer");
+  let html = `
+    <div class="calendar-header">
+      <button class="btn" id="prevMonth">‹ Prev</button>
+      <div class="month-label">${monthNames[month]} ${year}</div>
+      <button class="btn" id="nextMonth">Next ›</button>
+      <div class="spacer"></div>
+      <button class="btn" id="todayBtn">Today</button>
+    </div>
+    <div class="cal-grid">
+      ${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => `<div class="cal-dow">${d}</div>`).join("")}
+  `;
+
+  cells.forEach(cell => {
+    const dateStr = cell.other ? null : `${year}-${String(month+1).padStart(2,"0")}-${String(cell.day).padStart(2,"0")}`;
+    const isToday = dateStr && (new Date(dateStr + "T00:00:00")).toDateString() === TODAY.toDateString();
+    const dayItems = dateStr ? (itemsByDate[dateStr] || []) : [];
+    html += `<div class="cal-cell ${cell.other ? "other-month" : ""} ${isToday ? "today" : ""}">
+      <div class="cal-daynum">${cell.day}</div>`;
+    dayItems.slice(0, 3).forEach(item => {
+      const color = statusColor(board, item.status);
+      html += `<div class="cal-chip" style="background:${color}22;color:${color};" data-open="${item.id}" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>`;
+    });
+    if (dayItems.length > 3) {
+      html += `<div class="cal-more" data-day="${dateStr}">+${dayItems.length - 3} more</div>`;
+    }
+    html += `</div>`;
+  });
+  html += "</div>";
+  wrap.innerHTML = html;
+
+  wrap.querySelectorAll("[data-open]").forEach(el => { el.onclick = () => openModal(el.dataset.open); });
+  wrap.querySelectorAll("[data-day]").forEach(el => {
+    el.onclick = () => openDayList(el.dataset.day, itemsByDate[el.dataset.day] || []);
+  });
+  document.getElementById("prevMonth").onclick = () => {
+    ui.calMonth--; if (ui.calMonth < 0) { ui.calMonth = 11; ui.calYear--; }
+    renderView();
+  };
+  document.getElementById("nextMonth").onclick = () => {
+    ui.calMonth++; if (ui.calMonth > 11) { ui.calMonth = 0; ui.calYear++; }
+    renderView();
+  };
+  document.getElementById("todayBtn").onclick = () => {
+    ui.calMonth = TODAY.getMonth(); ui.calYear = TODAY.getFullYear();
+    renderView();
+  };
+}
+
+function openDayList(dateStr, items) {
+  const board = getBoard();
+  const overlay = document.getElementById("modalOverlay");
+  const content = document.getElementById("modalContent");
+  let html = `<button class="close-x" id="closeModalX">&times;</button>
+    <h2>${fmtDate(dateStr)}</h2><div style="margin-top:14px;">`;
+  items.forEach(item => {
+    const color = statusColor(board, item.status);
+    html += `<div class="day-list-item" data-open="${item.id}">
+      <span>${escapeHtml(item.name)}</span>
+      <span class="status-pill" style="background:${color}">${escapeHtml(item.status)}</span>
+    </div>`;
+  });
+  html += "</div>";
+  content.innerHTML = html;
+  overlay.classList.add("open");
+  content.querySelectorAll("[data-open]").forEach(el => { el.onclick = () => openModal(el.dataset.open); });
+  document.getElementById("closeModalX").onclick = closeModal;
+}
+
+// ---------- MODAL (view/edit item) ----------
+function openModal(itemId) {
+  const board = getBoard();
+  const item = board.items.find(i => i.id === itemId);
+  if (!item) return;
+  ui.editingItemId = itemId;
+  renderModal(board, item);
+  document.getElementById("modalOverlay").classList.add("open");
+}
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("open");
+  ui.editingItemId = null;
+}
+
+function renderModal(board, item) {
+  const content = document.getElementById("modalContent");
+  let fieldsHtml = "";
+
+  if (board.groups && board.groups.length) {
+    fieldsHtml += `<div class="field"><label>Group</label>
+      <select data-field="groupId">
+        ${board.groups.map(g => `<option value="${escapeHtml(g.id)}" ${g.id === item.groupId ? "selected" : ""}>${escapeHtml(g.title)}</option>`).join("")}
+      </select></div>`;
+  }
+
+  board.columns.forEach(c => {
+    if (c.type === "status") {
+      fieldsHtml += `<div class="field"><label>${escapeHtml(c.label)}</label>
+        <select data-field="status">
+          ${board.statusOrder.map(s => `<option value="${escapeHtml(s)}" ${s === item.status ? "selected" : ""}>${escapeHtml(s)}</option>`).join("")}
+        </select></div>`;
+    } else if (c.type === "date") {
+      fieldsHtml += `<div class="field"><label>${escapeHtml(c.label)}</label>
+        <input type="date" data-field="${c.key}" value="${item[c.key] || ""}"></div>`;
+    } else if (c.type === "longtext") {
+      fieldsHtml += `<div class="field"><label>${escapeHtml(c.label)}</label>
+        <textarea data-field="${c.key}">${escapeHtml(item[c.key] || "")}</textarea></div>`;
+    } else if (c.type === "link") {
+      const lv = item[c.key] || {};
+      fieldsHtml += `<div class="field"><label>${escapeHtml(c.label)}</label>
+        <div class="row2">
+          <div><input type="text" placeholder="Link text" data-field="${c.key}.label" value="${escapeHtml(lv.label || "")}"></div>
+          <div><input type="text" placeholder="https://..." data-field="${c.key}.url" value="${escapeHtml(lv.url || "")}"></div>
+        </div></div>`;
+    } else {
+      fieldsHtml += `<div class="field"><label>${escapeHtml(c.label)}</label>
+        <input type="text" data-field="${c.key}" value="${escapeHtml(item[c.key] || "")}"></div>`;
+    }
+  });
+
+  let subitemsHtml = "";
+  if (item.subitems && item.subitems.length) {
+    subitemsHtml = `<div class="field"><label>Subitems</label>`;
+    item.subitems.forEach((s, idx) => {
+      subitemsHtml += `<div class="subitem-row ${s.done ? "done" : ""}">
+        <input type="checkbox" data-subitem="${idx}" ${s.done ? "checked" : ""}>
+        <label style="margin:0;text-transform:none;font-weight:400;">${escapeHtml(s.name)}</label>
+      </div>`;
+    });
+    subitemsHtml += `</div>`;
+  }
+
+  content.innerHTML = `
+    <button class="close-x" id="closeModalX">&times;</button>
+    <div class="field">
+      <label>Item name</label>
+      <input type="text" data-field="name" value="${escapeHtml(item.name)}" style="font-size:15px;font-weight:600;">
+    </div>
+    ${fieldsHtml}
+    ${subitemsHtml}
+    <div class="modal-actions">
+      <button class="btn danger" id="deleteItemBtn">Delete item</button>
+      <button class="btn primary" id="doneEditBtn">Done</button>
+    </div>
+  `;
+
+  content.querySelectorAll("[data-field]").forEach(el => {
+    const evt = (el.tagName === "SELECT") ? "change" : "input";
+    el.addEventListener(evt, () => {
+      const field = el.dataset.field;
+      if (field.indexOf(".") !== -1) {
+        const parts = field.split(".");
+        const key = parts[0], sub = parts[1];
+        if (!item[key] || typeof item[key] !== "object") item[key] = { url: "", label: "" };
+        item[key][sub] = el.value;
+      } else {
+        item[field] = el.value;
+        if (field === "groupId") {
+          item.groupTitle = groupInfo(board, el.value).title;
+        }
+      }
+      saveState();
+      if (["status", "name", "groupId"].includes(field)) {
+        renderView(); renderHeader();
+      }
+    });
+  });
+  content.querySelectorAll("[data-subitem]").forEach(cb => {
+    cb.addEventListener("change", () => {
+      item.subitems[cb.dataset.subitem].done = cb.checked;
+      saveState();
+      renderModal(board, item);
+      renderView();
+    });
+  });
+  document.getElementById("closeModalX").onclick = closeModal;
+  document.getElementById("doneEditBtn").onclick = closeModal;
+  document.getElementById("deleteItemBtn").onclick = () => {
+    if (confirm("Remove \"" + item.name + "\" from this local view? (This does not affect Monday.com)")) {
+      board.items = board.items.filter(i => i.id !== item.id);
+      saveState();
+      closeModal();
+      renderAll();
+    }
+  };
+}
+
+function addNewItem() {
+  const board = getBoard();
+  const newId = "local-" + Date.now();
+  const defaultGroup = (board.groups && board.groups[0]) ? board.groups[0].id : null;
+  const newItem = {
+    id: newId, name: "New item", status: board.statusOrder[0],
+    groupId: defaultGroup, groupTitle: defaultGroup ? groupInfo(board, defaultGroup).title : "Other",
+    subitems: []
+  };
+  board.columns.forEach(c => { if (!(c.key in newItem)) newItem[c.key] = null; });
+  board.items.unshift(newItem);
+  saveState();
+  renderAll();
+  openModal(newId);
+}
+
+// ---------- ADD BOARD ----------
+function renderAddBoardModal() {
+  const overlay = document.getElementById("modalOverlay");
+  const content = document.getElementById("modalContent");
+  content.innerHTML = `
+    <button class="close-x" id="closeModalX">&times;</button>
+    <h2>Add a new board</h2>
+    <div class="field" style="margin-top:14px;"><label>Board name</label><input type="text" id="nbName" placeholder="e.g. Trade Show 2027"></div>
+    <div class="field"><label>Subtitle</label><input type="text" id="nbSubtitle" placeholder="Optional short description"></div>
+    <div class="row2">
+      <div class="field"><label>Item label</label><input type="text" id="nbItemLabel" value="Item"></div>
+      <div class="field"><label>First group name</label><input type="text" id="nbGroup" value="General"></div>
+    </div>
+    <div class="hint">Need to pull in a real Monday.com board instead of a blank one? Send me the board link in chat and I'll add its live data as a new board here.</div>
+    <div class="modal-actions" style="justify-content:flex-end;">
+      <button class="btn primary" id="createBoardBtn">Create board</button>
+    </div>
+  `;
+  overlay.classList.add("open");
+  document.getElementById("closeModalX").onclick = closeModal;
+  document.getElementById("createBoardBtn").onclick = () => {
+    const name = document.getElementById("nbName").value.trim();
+    if (!name) { alert("Please enter a board name."); return; }
+    const subtitle = document.getElementById("nbSubtitle").value.trim();
+    const itemLabel = document.getElementById("nbItemLabel").value.trim() || "Item";
+    const groupName = document.getElementById("nbGroup").value.trim() || "General";
+    const key = uniqueBoardKey(name);
+    const groupId = "group-" + Date.now().toString(36);
+    state[key] = {
+      id: key, name, subtitle, itemLabel,
+      statusColors: { "Not started": "#c4c4c4", "Working on it": "#FF9A00", "Done": "#14C7A0" },
+      statusOrder: ["Not started", "Working on it", "Done"],
+      columns: [{ key: "status", label: "Status", type: "status" }],
+      items: [],
+      groups: [{ id: groupId, title: groupName, color: BRAND_CYCLE[0] }]
+    };
+    BOARD_ORDER.push(key);
+    ui.currentBoard = key; ui.currentView = "board"; ui.search = ""; ui.statusFilter = "__all__"; ui.groupFilter = "__all__"; ui.sortCol = null;
+    saveState();
+    closeModal();
+    renderAll();
+  };
+}
+
+// ---------- ADD GROUP ----------
+function renderAddGroupModal() {
+  const board = getBoard();
+  const overlay = document.getElementById("modalOverlay");
+  const content = document.getElementById("modalContent");
+  content.innerHTML = `
+    <button class="close-x" id="closeModalX">&times;</button>
+    <h2>Add a group — ${escapeHtml(board.name)}</h2>
+    <div class="field" style="margin-top:14px;"><label>Group name</label><input type="text" id="ngName" placeholder="e.g. Q3 Campaigns"></div>
+    <div class="hint">New groups start out showing all of this board's current columns. Use "+ Column" on the group, or the Columns button, to customize which columns it shows.</div>
+    <div class="modal-actions" style="justify-content:flex-end;">
+      <button class="btn primary" id="createGroupBtn">Create group</button>
+    </div>
+  `;
+  overlay.classList.add("open");
+  document.getElementById("closeModalX").onclick = closeModal;
+  document.getElementById("createGroupBtn").onclick = () => {
+    const name = document.getElementById("ngName").value.trim();
+    if (!name) { alert("Please enter a group name."); return; }
+    if (!board.groups) board.groups = [];
+    const id = uniqueGroupKey(board, name);
+    const color = BRAND_CYCLE[board.groups.length % BRAND_CYCLE.length];
+    board.groups.push({ id, title: name, color });
+    saveState();
+    closeModal();
+    renderAll();
+  };
+}
+
+// ---------- MANAGE COLUMNS ----------
+function renderManageColumnsModal(focusGroupId) {
+  const board = getBoard();
+  if (!board.removedColumns) board.removedColumns = [];
+  const groups = board.groups || [];
+  const overlay = document.getElementById("modalOverlay");
+  const content = document.getElementById("modalContent");
+
+  const rows = board.columns.map((c, idx) => {
+    const pillsHtml = groups.length > 1 ? `
+      <div class="col-group-pills">
+        ${groups.map(g => {
+          const keys = g.columnKeys || board.columns.map(cc => cc.key);
+          const active = keys.includes(c.key);
+          return `<button type="button" class="pill ${active ? "active" : ""}" data-pill-col="${c.key}" data-pill-group="${g.id}">${escapeHtml(g.title)}</button>`;
+        }).join("")}
+      </div>` : "";
+    return `
+    <div class="col-row">
+      <input type="text" class="col-name-input" data-rename-key="${c.key}" value="${escapeHtml(c.label)}">
+      <span class="col-row-type">${escapeHtml(c.type)}</span>
+      <button class="btn danger col-remove" data-idx="${idx}">Remove</button>
+      ${pillsHtml}
+    </div>`;
+  }).join("");
+
+  const removedRows = board.removedColumns.map((c, idx) => `
+    <div class="col-row">
+      <span class="col-row-label" style="color:var(--text-light);">${escapeHtml(c.label)}</span>
+      <span class="col-row-type">${escapeHtml(c.type)}</span>
+      <button class="btn col-restore" data-idx="${idx}">Restore</button>
+    </div>`).join("");
+
+  const groupChecksHtml = groups.length > 1 ? `
+    <div class="field">
+      <label>Apply new column to these groups</label>
+      <div class="group-check-list">
+        ${groups.map(g => `<label class="group-check"><input type="checkbox" data-newcol-group="${g.id}" ${(!focusGroupId || g.id === focusGroupId) ? "checked" : ""}> ${escapeHtml(g.title)}</label>`).join("")}
+      </div>
+    </div>` : "";
+
+  content.innerHTML = `
+    <button class="close-x" id="closeModalX">&times;</button>
+    <h2>Manage columns — ${escapeHtml(board.name)}</h2>
+    <div class="hint">Columns are independent per board. Rename a column any time by editing its name below. Removing a column only hides it here &mdash; the underlying data is kept, and you can restore it below.${groups.length > 1 ? ' Use the group pills under each column to control which groups show it, so different groups on this board can have different columns.' : ''}</div>
+    <div class="field">
+      <label>Current columns</label>
+      <div class="col-list">${rows || '<div style="font-size:13px;color:var(--text-light);padding:10px 12px;">No columns yet.</div>'}</div>
+    </div>
+    ${board.removedColumns.length ? `
+    <div class="field">
+      <label>Recently removed (data preserved)</label>
+      <div class="col-list">${removedRows}</div>
+    </div>` : ""}
+    <div class="field">
+      <label>Add a column${focusGroupId ? ' (for "' + escapeHtml(groupInfo(board, focusGroupId).title) + '")' : ''}</label>
+      <div class="row2">
+        <div><input type="text" id="newColLabel" placeholder="Column name"></div>
+        <div>
+          <select id="newColType">
+            <option value="text">Text</option>
+            <option value="date">Date</option>
+            <option value="longtext">Long text</option>
+            <option value="link">Link</option>
+          </select>
+        </div>
+      </div>
+      ${groupChecksHtml}
+      <button class="btn primary" id="addColBtn" style="margin-top:10px;">Add column</button>
+    </div>
+    <div class="modal-actions" style="justify-content:flex-end;">
+      <button class="btn primary" id="doneColBtn">Done</button>
+    </div>
+  `;
+  overlay.classList.add("open");
+  document.getElementById("closeModalX").onclick = closeModal;
+  document.getElementById("doneColBtn").onclick = closeModal;
+
+  content.querySelectorAll("[data-rename-key]").forEach(input => {
+    input.addEventListener("click", (e) => e.stopPropagation());
+    input.addEventListener("input", () => {
+      const col = board.columns.find(c => c.key === input.dataset.renameKey);
+      if (!col) return;
+      col.label = input.value;
+      saveState();
+      renderView();
+    });
+  });
+
+  content.querySelectorAll(".col-remove").forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.idx, 10);
+      const removed = board.columns.splice(idx, 1)[0];
+      board.removedColumns.push(removed);
+      groups.forEach(g => {
+        if (g.columnKeys) g.columnKeys = g.columnKeys.filter(k => k !== removed.key);
+      });
+      saveState();
+      renderManageColumnsModal(focusGroupId);
+      renderView();
+    };
+  });
+  content.querySelectorAll(".col-restore").forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.idx, 10);
+      const restored = board.removedColumns.splice(idx, 1)[0];
+      board.columns.push(restored);
+      groups.forEach(g => { if (g.columnKeys && !g.columnKeys.includes(restored.key)) g.columnKeys.push(restored.key); });
+      saveState();
+      renderManageColumnsModal(focusGroupId);
+      renderView();
+    };
+  });
+  content.querySelectorAll("[data-pill-col]").forEach(btn => {
+    btn.onclick = () => {
+      const colKey = btn.dataset.pillCol;
+      const group = groups.find(g => g.id === btn.dataset.pillGroup);
+      if (!group) return;
+      ensureGroupColumnKeys(board, group);
+      const idx = group.columnKeys.indexOf(colKey);
+      if (idx === -1) group.columnKeys.push(colKey); else group.columnKeys.splice(idx, 1);
+      saveState();
+      renderManageColumnsModal(focusGroupId);
+      renderView();
+    };
+  });
+
+  document.getElementById("addColBtn").onclick = () => {
+    const label = document.getElementById("newColLabel").value.trim();
+    const type = document.getElementById("newColType").value;
+    if (!label) return;
+    const checkedGroupIds = groups.length > 1
+      ? Array.from(content.querySelectorAll("[data-newcol-group]:checked")).map(cb => cb.dataset.newcolGroup)
+      : null;
+
+    // Materialize explicit column lists for groups that should NOT get the new column,
+    // so they don't silently inherit it via the "no explicit list = show all" default.
+    if (checkedGroupIds) {
+      groups.forEach(g => {
+        if (!checkedGroupIds.includes(g.id)) ensureGroupColumnKeys(board, g);
+      });
+    }
+
+    const key = uniqueColKey(board, label);
+    board.columns.push({ key, label, type });
+    board.items.forEach(item => { if (!(key in item)) item[key] = null; });
+
+    if (checkedGroupIds) {
+      groups.forEach(g => {
+        if (checkedGroupIds.includes(g.id) && g.columnKeys) g.columnKeys.push(key);
+      });
+    }
+
+    saveState();
+    renderManageColumnsModal(focusGroupId);
+    renderView();
+  };
+}
+
+// ---------- MANAGE STATUSES ----------
+function renderManageStatusesModal() {
+  const board = getBoard();
+  const overlay = document.getElementById("modalOverlay");
+  const content = document.getElementById("modalContent");
+  const rows = board.statusOrder.map((label, idx) => `
+    <div class="col-row">
+      <input type="color" class="status-color-input" data-status-color-idx="${idx}" value="${board.statusColors[label] || "#c4c4c4"}">
+      <input type="text" class="col-name-input" data-status-rename-idx="${idx}" value="${escapeHtml(label)}">
+      <button class="btn danger status-remove" data-idx="${idx}">Remove</button>
+    </div>`).join("");
+
+  content.innerHTML = `
+    <button class="close-x" id="closeModalX">&times;</button>
+    <h2>Manage statuses — ${escapeHtml(board.name)}</h2>
+    <div class="hint">Rename a status by editing its text, or click the color swatch to recolor it. A status still assigned to an item can't be removed until those items are reassigned.</div>
+    <div class="field">
+      <label>Current statuses</label>
+      <div class="col-list">${rows || '<div style="font-size:13px;color:var(--text-light);padding:10px 12px;">No statuses yet.</div>'}</div>
+    </div>
+    <div class="field">
+      <label>Add a status</label>
+      <div class="row2">
+        <div><input type="text" id="newStatusLabel" placeholder="Status name"></div>
+        <div><input type="color" id="newStatusColor" value="${BRAND_CYCLE[board.statusOrder.length % BRAND_CYCLE.length]}" style="width:100%;height:38px;padding:2px;"></div>
+      </div>
+      <button class="btn primary" id="addStatusBtn" style="margin-top:10px;">Add status</button>
+    </div>
+    <div class="modal-actions" style="justify-content:flex-end;">
+      <button class="btn primary" id="doneStatusBtn">Done</button>
+    </div>
+  `;
+  overlay.classList.add("open");
+  document.getElementById("closeModalX").onclick = closeModal;
+  document.getElementById("doneStatusBtn").onclick = closeModal;
+
+  content.querySelectorAll("[data-status-rename-idx]").forEach(input => {
+    input.addEventListener("click", (e) => e.stopPropagation());
+    input.addEventListener("change", () => {
+      const idx = parseInt(input.dataset.statusRenameIdx, 10);
+      const oldLabel = board.statusOrder[idx];
+      const newLabel = input.value.trim() || oldLabel;
+      if (newLabel === oldLabel) return;
+      if (board.statusOrder.includes(newLabel)) {
+        alert("A status with that name already exists.");
+        renderManageStatusesModal();
+        return;
+      }
+      board.statusOrder[idx] = newLabel;
+      const color = board.statusColors[oldLabel];
+      delete board.statusColors[oldLabel];
+      board.statusColors[newLabel] = color;
+      if (ui.statusFilter === oldLabel) ui.statusFilter = newLabel;
+      board.items.forEach(it => { if (it.status === oldLabel) it.status = newLabel; });
+      saveState();
+      renderManageStatusesModal();
+      renderAll();
+    });
+  });
+
+  content.querySelectorAll("[data-status-color-idx]").forEach(input => {
+    input.addEventListener("input", () => {
+      const idx = parseInt(input.dataset.statusColorIdx, 10);
+      const label = board.statusOrder[idx];
+      board.statusColors[label] = input.value;
+      saveState();
+      renderView();
+    });
+  });
+
+  content.querySelectorAll(".status-remove").forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.idx, 10);
+      const label = board.statusOrder[idx];
+      const inUse = board.items.some(it => it.status === label);
+      if (inUse) {
+        alert('"' + label + '" is still used by one or more items. Reassign those items to a different status first.');
+        return;
+      }
+      board.statusOrder.splice(idx, 1);
+      delete board.statusColors[label];
+      if (ui.statusFilter === label) ui.statusFilter = "__all__";
+      saveState();
+      renderManageStatusesModal();
+      renderAll();
+    };
+  });
+
+  document.getElementById("addStatusBtn").onclick = () => {
+    const label = document.getElementById("newStatusLabel").value.trim();
+    const color = document.getElementById("newStatusColor").value;
+    if (!label) return;
+    if (board.statusOrder.includes(label)) { alert("That status already exists."); return; }
+    board.statusOrder.push(label);
+    board.statusColors[label] = color;
+    saveState();
+    renderManageStatusesModal();
+    renderAll();
+  };
+}
+
+// ---------- SAVE / EXPORT ----------
+function exportDashboard() {
+  const dataJson = JSON.stringify(state).replace(/<\/script/gi, "<\\/script");
+  const orderJson = JSON.stringify(BOARD_ORDER).replace(/<\/script/gi, "<\\/script");
+  let html = PRISTINE_HTML;
+  html = html.replace(/\/\*DATA_START\*\/[\s\S]*?\/\*DATA_END\*\//, "/*DATA_START*/" + dataJson + "/*DATA_END*/");
+  html = html.replace(/\/\*ORDER_START\*\/[\s\S]*?\/\*ORDER_END\*\//, "/*ORDER_START*/" + orderJson + "/*ORDER_END*/");
+  const blob = new Blob([html], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "team-board-dashboard.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// ---------- SHARE / EXPORT A SINGLE BOARD ----------
+function exportSingleBoard(boardId) {
+  const board = state[boardId];
+  if (!board) return;
+  const singleData = {};
+  singleData[boardId] = board;
+  const dataJson = JSON.stringify(singleData).replace(/<\/script/gi, "<\\/script");
+  const orderJson = JSON.stringify([boardId]).replace(/<\/script/gi, "<\\/script");
+  let html = PRISTINE_HTML;
+  html = html.replace(/\/\*DATA_START\*\/[\s\S]*?\/\*DATA_END\*\//, "/*DATA_START*/" + dataJson + "/*DATA_END*/");
+  html = html.replace(/\/\*ORDER_START\*\/[\s\S]*?\/\*ORDER_END\*\//, "/*ORDER_START*/" + orderJson + "/*ORDER_END*/");
+  const blob = new Blob([html], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "board-" + slugify(board.name) + ".html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// ---------- view render dispatch ----------
+function renderView() {
+  if (ui.currentView === "board") renderBoardGroups();
+  else if (ui.currentView === "table") renderTable();
+  else if (ui.currentView === "calendar") renderCalendar();
+}
+
+// ---------- init / listeners ----------
+document.getElementById("viewSwitch").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-view]");
+  if (!btn) return;
+  ui.currentView = btn.dataset.view;
+  renderViewSwitch();
+  renderView();
+});
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  ui.search = e.target.value;
+  renderHeader();
+  renderView();
+});
+document.getElementById("statusFilter").addEventListener("change", (e) => {
+  ui.statusFilter = e.target.value;
+  renderHeader();
+  renderView();
+});
+document.getElementById("groupFilter").addEventListener("change", (e) => {
+  ui.groupFilter = e.target.value;
+  renderHeader();
+  renderView();
+});
+document.getElementById("addItemBtn").addEventListener("click", addNewItem);
+document.getElementById("addBoardBtn").addEventListener("click", renderAddBoardModal);
+document.getElementById("addGroupBtn").addEventListener("click", renderAddGroupModal);
+document.getElementById("manageColumnsBtn").addEventListener("click", () => renderManageColumnsModal());
+document.getElementById("manageStatusesBtn").addEventListener("click", renderManageStatusesModal);
+document.getElementById("shareBoardBtn").addEventListener("click", () => exportSingleBoard(ui.currentBoard));
+document.getElementById("globalSearchInput").addEventListener("input", (e) => {
+  renderGlobalSearchResults(e.target.value.trim());
+});
+document.addEventListener("click", (e) => {
+  const bar = document.querySelector(".global-search-bar");
+  if (bar && !bar.contains(e.target)) {
+    document.getElementById("globalSearchResults").classList.remove("open");
+  }
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    document.getElementById("globalSearchResults").classList.remove("open");
+  }
+});
+document.getElementById("exportBtn").addEventListener("click", exportDashboard);
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (confirm("Reset all local edits (including any boards or columns you added) and reload the original Monday.com data pulled for this dashboard?")) {
+    resetState();
+    ui.currentBoard = BOARD_ORDER[0];
+    ui.collapsedGroups = {};
+    renderAll();
+  }
+});
+document.getElementById("modalOverlay").addEventListener("click", (e) => {
+  if (e.target.id === "modalOverlay") closeModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeModal();
+});
+
+renderAll();
+</script>
+</body>
+</html>
